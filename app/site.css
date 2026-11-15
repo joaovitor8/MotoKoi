@@ -1,0 +1,19 @@
+/* Padrões que se repetem nas telas de referência (lá estão como style inline). */
+html, body { height: 100%; }
+:root { --margem: max(24px, calc((100% - 1312px) / 2)); }
+.st-rotulo { font-weight: 600; font-size: 12px; line-height: 16px; letter-spacing: .2em; text-transform: uppercase; color: var(--text-brand); }
+.st-h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(44px, 5.4vw, 80px); line-height: .92; letter-spacing: -.01em; text-transform: uppercase; }
+.st-h1 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(60px, 7.6vw, 112px); line-height: .88; letter-spacing: -.015em; text-transform: uppercase; }
+
+/* Checkbox de verdade dentro do .mk-check (o motokoi.css só traz o estado .is-checked). */
+.mk-check { position: relative; }
+.mk-check input { position: absolute; opacity: 0; width: 20px; height: 20px; margin: 0; cursor: pointer; }
+.mk-check:has(input:checked) .mk-check__box { background: var(--brand); border-color: var(--brand); }
+.mk-check:has(input:checked) .mk-check__box .mk-ico { visibility: visible; }
+.mk-check:has(input:focus-visible) .mk-check__box { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* Foco visível no teclado. Vários campos usam "all: unset", que apaga o contorno padrão do navegador;
+   aqui o contorno volta, no campo ou na caixa que o envolve. Só aparece ao navegar pelo teclado. */
+a:focus-visible, button:focus-visible, summary:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+label:not(.mk-check):not(.mk-field):has(> input:focus-visible), .mk-field__control:has(:focus-visible), .ad-in:has(:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+.mk-field__control select:focus-visible, .ad-in select:focus-visible { outline: none; }
