@@ -56,6 +56,7 @@ export function FormularioCadastro({ chave, registro }: { chave: ChaveCadastro; 
                 ) : (
                   <input
                     name={campo.nome}
+                    type={campo.tipo === "data" ? "date" : "text"}
                     required={campo.obrigatorio}
                     maxLength={campo.max}
                     inputMode={campo.tipo === "numero" ? "decimal" : undefined}

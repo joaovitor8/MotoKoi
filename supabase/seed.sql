@@ -88,3 +88,10 @@ join public.motos m on m.slug = v.moto_slug;
 -- Ponto de venda conhecido
 insert into public.pontos_venda (tipo, nome, endereco, cidade, uf, ordem)
 values ('loja_propria', 'Mac Atacado', 'Rua Marechal Deodoro, 1462', 'Araçatuba', 'SP', 1);
+
+-- Números da marca: entram como rascunho; o dono preenche e publica no painel
+insert into public.numeros_marca (valor, rotulo, publicado, ordem) values
+  ('[N]', 'peças no catálogo',                                false, 1),
+  ('[N]', 'modelos de moto atendidos',                        false, 2),
+  ('[N]', 'pontos de venda',                                  false, 3),
+  ('[N]', 'meses de garantia contra defeito de fabricação',   false, 4);

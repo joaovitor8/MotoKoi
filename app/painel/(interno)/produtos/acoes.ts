@@ -7,7 +7,8 @@ import { equipe } from "@/lib/painel";
 export type Especificacao = { rotulo: string; valor: string };
 export type ItemCaixa = { quantidade: number; descricao: string };
 export type MotoDoProduto = { moto_id: number; ano_inicio: number | null; ano_fim: number | null; observacao: string };
-export type Listas = { especificacoes: Especificacao[]; itens: ItemCaixa[]; motos: MotoDoProduto[] };
+export type CodigoOriginal = { fabricante: string; codigo: string };
+export type Listas = { especificacoes: Especificacao[]; itens: ItemCaixa[]; motos: MotoDoProduto[]; codigos: CodigoOriginal[] };
 
 export type CamposProduto = {
   nome: string;
@@ -16,6 +17,8 @@ export type CamposProduto = {
   resumo: string;
   descricao: string;
   novidade: boolean;
+  garantia_meses: string; // vazio = usa a garantia padrão da marca
+  inmetro_registro: string;
 };
 export type EstadoProduto = { erro?: string; salvo?: string; status?: "publicado" | "rascunho"; valores?: CamposProduto };
 
@@ -37,6 +40,8 @@ export async function salvarProduto(_anterior: EstadoProduto, formulario: FormDa
     resumo: texto("resumo"),
     descricao: texto("descricao"),
     novidade: formulario.get("novidade") === "on",
+    garantia_meses: texto("garantia_meses"),
+    inmetro_registro: texto("inmetro_registro"),
   };
   const erro = (mensagem: string): EstadoProduto => ({ erro: mensagem, valores });
 
@@ -60,6 +65,11 @@ export async function salvarProduto(_anterior: EstadoProduto, formulario: FormDa
     observacao: String(m.observacao ?? "").trim(),
   }));
 
+  const codigos = (listas.codigos ?? [])
+    .map((c) => ({ fabricante: String(c.fabricante ?? "").trim(), codigo: String(c.codigo ?? "").trim() }))
+    .filter((c) => c.fabricante || c.codigo);
+  const garantia = valores.garantia_meses === "" ? null : Number(valores.garantia_meses);
+
   if (!valores.nome) return erro("Informe o nome do produto.");
   if (!slugDe(valores.nome)) return erro("O nome precisa ter pelo menos uma letra ou número.");
   if (!/^\d+$/.test(valores.categoria_id)) return erro("Escolha a categoria.");
@@ -73,12 +83,18 @@ export async function salvarProduto(_anterior: EstadoProduto, formulario: FormDa
   if (motos.some((m) => m.ano_inicio && m.ano_fim && m.ano_fim < m.ano_inicio))
     return erro("Em “Motos compatíveis”, o ano final não pode ser menor que o inicial.");
 
+  if (codigos.some((c) => !c.fabricante || !c.codigo))
+    return erro("Em “Códigos originais”, preencha o fabricante e o código de cada linha, ou remova a linha.");
+  if (garantia !== null && (!Number.isInteger(garantia) || garantia < 1 || garantia > 120))
+    return erro("A garantia precisa ser um número de meses entre 1 e 120, ou ficar vazia para usar o padrão da marca.");
+
   // A função do banco grava tudo numa transação só (ver a migração salvar_produto).
   const { data: idSalvo, error } = await supabase.rpc("salvar_produto", {
-    dados: { id, ...valores, categoria_id: Number(valores.categoria_id), slug: slugDe(valores.nome), status, especificacoes, itens, motos },
+    dados: { id, ...valores, categoria_id: Number(valores.categoria_id), garantia_meses: garantia, slug: slugDe(valores.nome), status, especificacoes, itens, motos, codigos },
   });
   if (error) {
     if (error.code === "23505" && error.message.includes("slug")) return erro("Já existe um produto com esse nome. Mude o nome para criar outro.");
+    if (error.code === "23505" && error.message.includes("codigos_originais")) return erro("Há um código original repetido na lista.");
     if (error.code === "23505" && error.message.includes("codigo")) return erro("Já existe um produto com esse código.");
     if (error.code === "23514") return erro("Algum campo passou do tamanho permitido. Encurte o texto e tente de novo.");
     console.error("Produto não salvo:", error.code, error.message);

@@ -51,10 +51,12 @@ Confira a documentação atual de cada ferramenta antes de usar; não confie em 
 | Seja revendedor | `/seja-revendedor` | `design/telas/04-seja-revendedor.html` |
 | Onde comprar | `/onde-comprar` | `design/telas/05-onde-comprar.html` |
 | A marca | `/a-marca` | `design/telas/06-a-marca.html` |
-| Painel: entrar | `/painel/entrar` | `design/telas/07-painel-entrar.html` |
-| Painel: produtos | `/painel/produtos` | `design/telas/08-painel-produtos.html` |
-| Painel: editar produto | `/painel/produtos/[id]` | `design/telas/09-painel-editar-produto.html` |
-| Painel: pedidos de revenda | `/painel/revenda` | `design/telas/10-painel-pedidos-de-revenda.html` |
+| Garantia | `/garantia` | `design/telas/07-garantia.html` |
+| Painel: entrar | `/painel/entrar` | `design/telas/08-painel-entrar.html` |
+| Painel: produtos | `/painel/produtos` | `design/telas/09-painel-produtos.html` |
+| Painel: editar produto | `/painel/produtos/[id]` | `design/telas/10-painel-editar-produto.html` |
+| Painel: pedidos de revenda | `/painel/revenda` | `design/telas/11-painel-pedidos-de-revenda.html` |
+| Painel: conteúdo do site | `/painel/conteudo` | `design/telas/12-painel-conteudo-do-site.html` |
 
 Notas:
 - Os caminhos `design/...` deste arquivo são relativos a `motokoi-site/`.
@@ -65,13 +67,14 @@ Notas:
 
 ### O que cada tela faz
 
-- **Home:** título, coroa, lista de linhas de produto, Novidades (4 produtos marcados no painel), busca por moto, a marca em três valores, faixa de revenda, rodapé.
-- **Catálogo:** busca por peça, código ou moto; filtro por categoria e por moto; grade de produtos; ordenação; paginação.
-- **Produto:** fotos (principal + miniaturas), categoria, selo "Novidade", nome, código, descrição, ficha técnica, botões "Onde comprar" e "Falar no WhatsApp", chamada para lojista, tabela "Serve em" (modelo, anos, observação), lista "Na caixa", outras peças para a mesma moto.
-- **Seja revendedor:** números, três passos, formulário de cadastro, dúvidas frequentes.
-- **Onde comprar:** busca por cidade ou CEP, lista de pontos de venda, mapa.
-- **A marca:** texto do koi, foto, história, três valores, bloco do aço 1045.
-- **Painel:** login; lista de produtos com busca, filtros e status; formulário de produto; lista de cadastros de revenda com detalhe, mudança de situação e anotações.
+- **Home:** título com a busca "Qual é a sua moto?" (marca, modelo, ano) logo no topo, modelos mais buscados, link "Buscar por código"; coroa; linhas de produto; Novidades (4 produtos marcados no painel); números da marca + faixa Inmetro; faixa de revenda; rodapé.
+- **Catálogo:** busca por peça, código MotoKoi, código original ou moto; filtros de categoria, moto e ano; botão "Baixar PDF" do catálogo; cartões mostram código MotoKoi e código original; ordenação; paginação.
+- **Produto:** fotos, categoria, selo "Novidade", nome, código MotoKoi e código original, descrição, ficha técnica, botões "Onde comprar" e "Falar no WhatsApp", garantia (com link "Como acionar"), selo Inmetro, download da ficha técnica em PDF, chamada para lojista, tabela "Serve em", lista "Na caixa", outras peças para a mesma moto.
+- **Seja revendedor:** números, três passos, formulário, depoimentos de lojistas, materiais para baixar (catálogo, fotos, fichas, logo), dúvidas frequentes.
+- **Onde comprar:** filtro por estado + cidade ou CEP, abas Todos / Lojas próprias / Revendedores, lista e mapa.
+- **A marca:** texto do koi, foto, história, três valores, bloco "O que garante cada peça" (garantia, Inmetro, código original, aço 1045).
+- **Garantia:** prazo, o que cobre e o que não cobre, quatro passos para acionar, WhatsApp.
+- **Painel:** login; lista de produtos; formulário de produto (agora com códigos originais, garantia, Inmetro e ficha técnica PDF); pedidos de revenda; Conteúdo do site (números da marca, materiais para lojista, depoimentos, garantia padrão).
 
 ## 6. Design system
 
@@ -101,14 +104,16 @@ Regras visuais que as telas seguem:
 O banco já está modelado e testado. Leia `docs/banco.md` antes de mexer nele.
 
 - Migrações em `supabase/migrations/`, dados de desenvolvimento em `supabase/seed.sql`.
-- Teste das regras de acesso: `node supabase/testes/regras-de-acesso.mjs` (37 verificações).
+- Teste das regras de acesso: `node supabase/testes/regras-de-acesso.mjs` (63 verificações).
 - Mudanças no banco entram como **nova migração**; não edite as que já foram aplicadas.
 - Explique ao João o porquê de cada mudança no banco: ele está aprendendo modelagem.
 - Projeto no Supabase: `motokoi` (ref `bbzpiwyxspdnhkqoqiwj`, região us-west-2). As migrações e o seed estão aplicados nele; os nomes dos arquivos em `supabase/migrations/` usam a mesma versão registrada lá.
 - O site lê o catálogo por `lib/produtos.ts` (supabase-js com a chave publishable, `"use cache"` com a etiqueta `catalogo`). O painel, ao salvar, deve chamar `updateTag("catalogo")`. As variáveis ficam em `.env.local` (modelo em `.env.example`) e precisam existir também na Vercel.
 - Painel: `proxy.ts` renova a sessão e barra quem não entrou; toda página e ação interna começa com `equipe()` de `lib/painel.ts`, que exige login e linha ativa em `perfis`. Telas: entrar, produtos (lista e formulário com fotos), pedidos de revenda, e Categorias, Motos e Lojas, que compartilham `app/painel/(interno)/cadastros/` (uma configuração por tela em `config.ts`). O produto é gravado pela função `salvar_produto` do banco, numa transação. Toda gravação chama `updateTag("catalogo")`. Falta: "Esqueci a senha". As telas internas foram construídas sem que o Claude pudesse entrar; quem testa é o João.
+- Pacote de 15/11/2026 (análise dos concorrentes, seção 9.1): banco e site prontos. O site lê o conteúdo editável por `lib/conteudo.ts` (garantia padrão, WhatsApp, PDF do catálogo, números, materiais, depoimentos); seções sem dado publicado ficam escondidas, e dado que depende do dono aparece entre colchetes. O catálogo continua filtrando em memória (`lib/filtro.ts`, com ano e código original); `buscar_produtos` existe no banco e não é usada. O painel também está pronto: o formulário de produto tem códigos originais, garantia, Inmetro e ficha em PDF, e `/painel/conteudo` reúne garantia padrão, WhatsApp, materiais (envio para o bucket `materiais`) e os atalhos para Números da marca e Depoimentos, que usam o cadastro genérico. Essas telas novas ainda não foram testadas com login.
 - Revisão de celular e acessibilidade (passo 8): feita em 15/11/2026 nas páginas públicas e na tela de entrar. As telas internas do painel não foram revisadas, porque exigem login.
-- Testes: `npm test` roda a validação do formulário de revenda, a leitura dos cadastros do painel e as regras do banco.
+- Segurança (revisão de 15/11/2026): cabeçalhos e CSP em `next.config.ts`, cookies de sessão com `Secure` em produção, páginas de erro em português sem detalhes técnicos. `npm run test:seguranca` testa as proteções contra um servidor no ar (30 verificações). Pendências que dependem do João: limite de requisições ou captcha no formulário de revenda, monitoramento, e no Supabase desligar o cadastro público, ligar a proteção contra senhas vazadas e o 2FA.
+- Testes: `npm test` roda a validação do formulário de revenda, o filtro do catálogo, a leitura dos cadastros do painel e as regras do banco.
 - `supabase/` e `docs/` foram copiados de `motokoi-site/` em 13/11/2026. As cópias da raiz são as que valem; as de `motokoi-site/` ficam só como origem.
 
 Dados que as telas mostram (para conferir com o banco):
@@ -119,6 +124,9 @@ Dados que as telas mostram (para conferir com o banco):
 - **Ponto de venda:** tipo (loja própria ou revendedor), nome, endereço, cidade e estado, horário, WhatsApp, posição no mapa.
 - **Cadastro de revenda:** nome da loja, CNPJ ou CPF, tipo de negócio, nome do responsável, WhatsApp, e-mail, cidade e estado, mensagem, aceite de contato, data de recebimento, situação (novo, em contato, aprovado, recusado), anotações internas.
 - **Usuário do painel:** e-mail, senha, nome.
+- **Códigos originais:** fabricante + código da montadora, vários por produto. A busca ignora traço e espaço.
+- **Conteúdo do site:** números da marca, materiais para baixar, depoimentos (só publica com data de autorização), garantia padrão, WhatsApp, PDF do catálogo.
+- **Busca do catálogo:** use a função `buscar_produtos(termo, categoria, moto, ano)`; detalhes em `docs/banco.md`.
 
 Regras de acesso a respeitar:
 - Visitante só lê produtos publicados, categorias, motos e pontos de venda.
@@ -152,7 +160,27 @@ Tudo que está entre colchetes nas telas é espaço reservado. **Não invente es
 - Respostas das dúvidas do revendedor (CNPJ, pedido mínimo, regiões de entrega, garantia).
 - Confirmação dos textos de vantagem para o revendedor ("tabela exclusiva", "dá para começar com poucas peças", "atendimento direto"). Foram sugeridos no design, não vieram do dono.
 - Confirmação de que o "Koi" do nome é mesmo o peixe. Todo o texto "contra a correnteza" depende disso.
+- **Código original da montadora** de cada peça (ex.: código Honda). É o que o lojista mais usa para buscar.
+- **Prazo de garantia** e o que ela cobre e não cobre. Os itens da página Garantia são sugestões marcadas com colchete.
+- **Inmetro:** se o kit transmissão é certificado e o número do registro. Se não for, tire o selo das telas.
+- **Números da marca** que dá para comprovar (peças, modelos atendidos, pontos de venda).
+- **Depoimentos reais** de revendedores, com autorização por escrito.
+- **Catálogo em PDF**, fotos para lojista, fichas técnicas e logo em arquivo.
 - Logo original em vetor.
+
+## 9.1 O que veio da análise dos concorrentes
+
+Foram analisados os sites de 23 marcas que disputam o mesmo balcão (Riffel, Magnetron, Cofap, Cobreq, Pro Tork, Vaz, Tmac e outras). O que entrou no projeto por causa disso:
+
+- Busca por moto e ano no topo da Home (Riffel e Cofap fazem; é como o lojista pensa).
+- Código original da montadora em cada peça e na busca (Magnetron, Riffel).
+- Página de Garantia e garantia na página do produto (Cobreq, WGK, Magnetron, Riffel).
+- Números da marca e selo Inmetro, só com dado comprovável.
+- Catálogo em PDF e materiais para o lojista baixar.
+- Onde comprar com filtro por estado e tipo de loja (Cofap).
+- Depoimentos de revendedores, só reais e autorizados.
+
+O que não copiar: textos genéricos, rodapé com ano velho, páginas com "Lorem ipsum" ou "em construção" — vários concorrentes têm isso, e é uma vantagem da MotoKoi não ter.
 
 ## 10. Ordem de trabalho sugerida
 

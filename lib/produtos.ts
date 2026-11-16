@@ -1,9 +1,10 @@
 import { cacheLife, cacheTag } from "next/cache";
-import { urlDaFoto } from "./fotos";
+import { urlDaFoto, urlDoMaterial } from "./fotos";
 import { supabase } from "./supabase";
 
 export type Categoria = { slug: string; nome: string; resumo: string | null; total: number };
-export type Moto = { slug: string; nome: string };
+// nome = "Titan 150" (filtros); fabricante e modelo = "Honda" e "CG 150 Titan" (busca da Home)
+export type Moto = { slug: string; nome: string; fabricante: string; modelo: string };
 export type Produto = {
   slug: string;
   nome: string;
@@ -15,7 +16,12 @@ export type Produto = {
   especificacoes: { rotulo: string; valor: string }[];
   itensCaixa: { quantidade: number; descricao: string }[];
   // nome = "Titan 150" (filtros e cartões); modelo = "Honda CG 150 Titan" (tabela "Serve em")
-  motos: { slug: string; nome: string; modelo: string; anos: string | null; observacao: string | null }[];
+  motos: { slug: string; nome: string; modelo: string; anos: string | null; anoInicio: number | null; anoFim: number | null; observacao: string | null }[];
+  // Código da montadora que a peça substitui. `busca` é o código só com letras e números.
+  codigosOriginais: { fabricante: string; codigo: string; busca: string }[];
+  garantiaMeses: number | null; // vazio = vale a garantia padrão da marca
+  inmetro: string | null;
+  fichaTecnica: string | null; // URL do PDF
   // Em ordem; a primeira é a capa. Vazio enquanto o painel não enviar fotos.
   fotos: { url: string; alt: string }[];
 };
@@ -46,8 +52,8 @@ export async function listarCategorias(): Promise<Categoria[]> {
 export async function listarMotos(): Promise<Moto[]> {
   "use cache";
   cacheDoCatalogo();
-  const linhas = await consultar(supabase.from("motos").select("slug, nome_curto").order("ordem"));
-  return linhas.map((m) => ({ slug: m.slug, nome: m.nome_curto }));
+  const linhas = await consultar(supabase.from("motos").select("slug, nome_curto, fabricante, modelo").order("ordem"));
+  return linhas.map((m) => ({ slug: m.slug, nome: m.nome_curto, fabricante: m.fabricante, modelo: m.modelo }));
 }
 
 export type PontoDeVenda = {
@@ -57,6 +63,7 @@ export type PontoDeVenda = {
   endereco: string;
   cidade: string;
   uf: string;
+  cep: string | null;
   horario: string | null;
   whatsapp: string | null;
 };
@@ -66,7 +73,7 @@ export async function listarPontosDeVenda(): Promise<PontoDeVenda[]> {
   "use cache";
   cacheDoCatalogo();
   return consultar(
-    supabase.from("pontos_venda").select("id, tipo, nome, endereco, cidade, uf, horario, whatsapp").eq("ativo", true).order("ordem").order("id"),
+    supabase.from("pontos_venda").select("id, tipo, nome, endereco, cidade, uf, cep, horario, whatsapp").eq("ativo", true).order("ordem").order("id"),
   ) as Promise<PontoDeVenda[]>;
 }
 
@@ -84,7 +91,8 @@ export async function listarProdutos(): Promise<Produto[]> {
     supabase
       .from("produtos")
       .select(
-        `slug, nome, resumo, codigo, descricao, novidade,
+        `slug, nome, resumo, codigo, descricao, novidade, garantia_meses, inmetro_registro, ficha_tecnica_caminho,
+         codigos:produto_codigos_originais(fabricante, codigo, codigo_busca),
          categoria:categorias(slug, nome),
          especificacoes:produto_especificacoes(rotulo, valor, ordem),
          itens:produto_itens_caixa(quantidade, descricao, ordem),
@@ -112,30 +120,17 @@ export async function listarProdutos(): Promise<Produto[]> {
         nome: c.moto.nome_curto,
         modelo: `${c.moto.fabricante} ${c.moto.modelo}`,
         anos: anos(c.ano_inicio, c.ano_fim),
+        anoInicio: c.ano_inicio,
+        anoFim: c.ano_fim,
         observacao: c.observacao,
       })),
+    codigosOriginais: p.codigos.map((c: any) => ({ fabricante: c.fabricante, codigo: c.codigo, busca: c.codigo_busca })),
+    garantiaMeses: p.garantia_meses,
+    inmetro: p.inmetro_registro,
+    fichaTecnica: p.ficha_tecnica_caminho ? urlDoMaterial(p.ficha_tecnica_caminho) : null,
     fotos: [...p.fotos].sort(porOrdem).map((f: any) => ({ url: urlDaFoto(f.caminho), alt: f.texto_alternativo ?? p.nome })),
   }));
   /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
-// Compara sem diferenciar maiúsculas nem acentos: "transmissao" acha "Transmissão".
-const limpo = (s: string) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
-export const contem = (texto: string, trecho: string) => limpo(texto).includes(limpo(trecho));
-
-// `categoria` e `motos` são slugs; `busca` é texto livre (nome, código, categoria ou moto).
-export function filtrarProdutos(
-  produtos: Produto[],
-  { categoria, motos, busca }: { categoria?: string; motos: string[]; busca?: string },
-) {
-  return produtos.filter(
-    (p) =>
-      (!categoria || p.categoria.slug === categoria) &&
-      (!motos.length || p.motos.some((m) => motos.includes(m.slug))) &&
-      (!busca ||
-        contem(
-          `${p.nome} ${p.codigo ?? ""} ${p.categoria.nome} ${p.motos.map((m) => `${m.nome} ${m.modelo}`).join(" ")}`,
-          busca,
-        )),
-  );
-}
+export { contem, filtrarProdutos } from "./filtro";

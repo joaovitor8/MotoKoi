@@ -49,11 +49,13 @@ export function FormularioProduto({
   categorias,
   motos: todasAsMotos,
   fotos,
+  ficha,
 }: {
   produto: ProdutoDoPainel;
   categorias: { id: number; nome: string }[];
   motos: { id: number; nome: string }[];
   fotos: ReactNode;
+  ficha: ReactNode; // envio da ficha técnica em PDF; também fica fora do "Salvar"
 }) {
   const [estado, enviar, salvando] = useActionState<EstadoProduto, FormData>(salvarProduto, {});
   // Depois de salvar (ou de um erro), os campos voltam com o que foi enviado, não com o que veio do banco.
@@ -64,6 +66,7 @@ export function FormularioProduto({
   const [especificacoes, setEspecificacoes] = useState(produto.especificacoes);
   const [itens, setItens] = useState(produto.itens);
   const [motos, setMotos] = useState(produto.motos);
+  const [codigos, setCodigos] = useState(produto.codigos);
   const nomeDaMoto = (id: number) => todasAsMotos.find((m) => m.id === id)?.nome ?? "Moto";
   const trocar = <T,>(lista: T[], indice: number, mudanca: Partial<T>) => lista.map((item, i) => (i === indice ? { ...item, ...mudanca } : item));
   const semItem = <T,>(lista: T[], indice: number) => lista.filter((_, i) => i !== indice);
@@ -109,7 +112,7 @@ export function FormularioProduto({
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: 24 }}>
         <form id="produto" action={enviar} style={{ flex: "2 1 560px", minWidth: 0, display: "flex", flexDirection: "column", gap: 24 }}>
           {produto.id && <input type="hidden" name="id" value={produto.id} />}
-          <input type="hidden" name="listas" value={JSON.stringify({ especificacoes, itens, motos })} />
+          <input type="hidden" name="listas" value={JSON.stringify({ especificacoes, itens, motos, codigos })} />
 
           <section className="ad-card" style={{ ...cartao, gap: 20 }}>
             <h2>Informações</h2>
@@ -167,6 +170,29 @@ export function FormularioProduto({
             <div>
               <button type="button" className="mk-btn mk-btn--secondary" onClick={() => setEspecificacoes([...especificacoes, { rotulo: "", valor: "" }])}>
                 + Adicionar linha
+              </button>
+            </div>
+          </section>
+
+          <section className="ad-card" style={cartao}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <h2>Códigos originais</h2>
+              <span style={subtitulo}>O código da peça da montadora que esta peça substitui. O lojista busca por ele.</span>
+            </div>
+            {codigos.map((c, i) => (
+              <div key={i} style={linha}>
+                <span className="ad-in" style={{ flex: "1 1 140px" }}>
+                  <input aria-label="Fabricante" placeholder="Ex.: Honda" maxLength={40} value={c.fabricante} onChange={(ev) => setCodigos(trocar(codigos, i, { fabricante: ev.target.value }))} />
+                </span>
+                <span className="ad-in" style={{ flex: "2 1 220px" }}>
+                  <input aria-label="Código original" placeholder="Ex.: 40530-KVS-305" maxLength={40} value={c.codigo} onChange={(ev) => setCodigos(trocar(codigos, i, { codigo: ev.target.value }))} />
+                </span>
+                <Remover oQue={c.codigo || `código ${i + 1}`} onClick={() => setCodigos(semItem(codigos, i))} />
+              </div>
+            ))}
+            <div>
+              <button type="button" className="mk-btn mk-btn--secondary" onClick={() => setCodigos([...codigos, { fabricante: "", codigo: "" }])}>
+                + Adicionar código
               </button>
             </div>
           </section>
@@ -237,6 +263,21 @@ export function FormularioProduto({
 
         <div style={{ flex: "1 1 320px", minWidth: 0, display: "flex", flexDirection: "column", gap: 24 }}>
           {fotos}
+
+          <section className="ad-card" style={cartao}>
+            <h2>Garantia e certificação</h2>
+            <Campo nome="Garantia (meses)" largura="0 0 auto" dica="Deixe vazio para usar o prazo padrão da marca.">
+              <span className="ad-in">
+                <input name="garantia_meses" form="produto" inputMode="numeric" maxLength={3} defaultValue={v.garantia_meses} />
+              </span>
+            </Campo>
+            <Campo nome="Registro Inmetro" largura="0 0 auto" dica="Só para peças certificadas. Aparece como selo na página do produto.">
+              <span className="ad-in">
+                <input name="inmetro_registro" form="produto" maxLength={60} placeholder="Ex.: 001234/2026" defaultValue={v.inmetro_registro} />
+              </span>
+            </Campo>
+            {ficha}
+          </section>
 
           <section className="ad-card" style={cartao}>
             <h2>Publicação</h2>

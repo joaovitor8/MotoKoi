@@ -4,6 +4,8 @@ import { Cabecalho } from "@/components/Cabecalho";
 import { EspacoFoto } from "@/components/EspacoFoto";
 import { Icone } from "@/components/Icone";
 import { Ondas } from "@/components/Ondas";
+import { obterConteudo } from "@/lib/conteudo";
+import { listarProdutos } from "@/lib/produtos";
 
 export const metadata: Metadata = { title: "A marca" };
 
@@ -16,7 +18,10 @@ const valores = [
 const tituloBloco = { display: "flex", flexDirection: "column", gap: 16 } as const;
 const paragrafo = { margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)" };
 
-export default function AMarca() {
+export default async function AMarca() {
+  const [conteudo, produtos] = await Promise.all([obterConteudo(), listarProdutos()]);
+  // Selo do Inmetro: só com registro cadastrado em algum produto publicado.
+  const certificado = produtos.find((p) => p.inmetro);
   return (
     <>
       <Cabecalho atual="/a-marca" />
@@ -117,38 +122,37 @@ export default function AMarca() {
           </div>
         </section>
 
-        <section style={{ padding: "112px var(--margem)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "48px 72px" }}>
-          <div style={{ flex: "1 1 420px", minWidth: 0, display: "flex", flexDirection: "column", gap: 4 }}>
-            <span
-              style={{
-                fontFamily: "var(--font-display)",
-                fontWeight: 800,
-                fontSize: "clamp(140px, 19vw, 280px)",
-                lineHeight: 0.8,
-                letterSpacing: "-.02em",
-                color: "var(--brand)",
-              }}
-            >
-              1045
-            </span>
-            <span className="st-rotulo" style={{ color: "var(--text-muted)", paddingTop: 20 }}>
-              O aço do kit transmissão
-            </span>
-          </div>
-          <div style={{ flex: "1 1 420px", minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
-            <h2 style={{ margin: 0, fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 32, lineHeight: "34px", textTransform: "uppercase" }}>
-              Por que o aço importa
-            </h2>
-            <p style={paragrafo}>
-              Coroa e pinhão trabalham sob atrito o tempo todo. O aço 1045 é um aço de médio carbono, usado em peças que
-              precisam resistir a desgaste e a esforço.
-            </p>
-            <p style={paragrafo}>[DETALHE DO PROCESSO: tratamento térmico, controle de qualidade, origem das peças.]</p>
-            <div>
-              <Link className="mk-btn mk-btn--secondary" href="/catalogo/kit-transmissao-titan-150">
-                Ver o kit transmissão <Icone nome="arrow-right" />
-              </Link>
+        <section style={{ padding: "112px var(--margem)", display: "flex", flexDirection: "column", gap: 40 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: "16px 48px" }}>
+            <div style={tituloBloco}>
+              <span className="st-rotulo">Qualidade que dá para conferir</span>
+              <h2 className="st-h2">
+                O que garante
+                <br />
+                cada peça
+              </h2>
             </div>
+            <Link className="mk-btn mk-btn--secondary" href="/garantia">
+              Ver a garantia <Icone nome="arrow-right" />
+            </Link>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 32 }}>
+            {[
+              { titulo: `Garantia de ${conteudo.garantiaMeses ?? "[N]"} meses`, texto: "Contra defeito de fabricação, acionada pela loja onde a peça foi comprada." },
+              {
+                titulo: "Inmetro",
+                texto: certificado
+                  ? `${certificado.nome} certificado, registro nº ${certificado.inmetro}`
+                  : "[SE TIVER: kit transmissão certificado, registro nº ...]",
+              },
+              { titulo: "Código original", texto: "Cada peça indica o código da montadora equivalente." },
+              { titulo: "Aço 1045", texto: "Coroa e pinhão do kit transmissão em aço de médio carbono." },
+            ].map((g) => (
+              <div key={g.titulo} style={{ flex: "1 1 240px", minWidth: 0, display: "flex", flexDirection: "column", gap: 8, paddingTop: 20, borderTop: "1.5px solid var(--text)" }}>
+                <b style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 26, lineHeight: "28px", textTransform: "uppercase" }}>{g.titulo}</b>
+                <span style={{ fontSize: 15, lineHeight: "24px", color: "var(--text-secondary)" }}>{g.texto}</span>
+              </div>
+            ))}
           </div>
         </section>
 

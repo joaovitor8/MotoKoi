@@ -4,15 +4,11 @@ import { Cabecalho } from "@/components/Cabecalho";
 import { CartaoProduto } from "@/components/CartaoProduto";
 import { Icone } from "@/components/Icone";
 import { Ondas } from "@/components/Ondas";
+import { anoAtual, obterConteudo } from "@/lib/conteudo";
 import { listarCategorias, listarMotos, listarProdutos } from "@/lib/produtos";
+import { BuscaPorMoto } from "./BuscaPorMoto";
 
-const valores = [
-  { titulo: "Confiança", texto: "Cada peça com código, aplicação e a marca na caixa." },
-  { titulo: "Qualidade", texto: "Kit transmissão fabricado em aço 1045." },
-  { titulo: "Durabilidade", texto: "Feita para a moto que roda todo dia." },
-];
-
-const numeros = [
+const numerosRevenda = [
   { numero: "3", texto: "lojas próprias" },
   { numero: "48h", texto: "tempo médio de resposta ao cadastro" },
   { numero: "R$ 0", texto: "de taxa de adesão ou mensalidade" },
@@ -23,14 +19,16 @@ const tituloSecao = { display: "flex", flexDirection: "column", gap: 16 } as con
 const linkTexto = { fontWeight: 600, fontSize: 16, lineHeight: "20px", padding: "12px 0" };
 
 export default async function Home() {
-  const [categorias, motos, produtos] = await Promise.all([listarCategorias(), listarMotos(), listarProdutos()]);
+  const [categorias, motos, produtos, conteudo, ano] = await Promise.all([listarCategorias(), listarMotos(), listarProdutos(), obterConteudo(), anoAtual()]);
+  // Selo do Inmetro: só existe se algum produto publicado tiver registro cadastrado no painel.
+  const certificado = produtos.find((p) => p.inmetro);
   return (
     <>
       <Cabecalho />
       <main>
         <section style={{ position: "relative", overflow: "hidden", padding: "0 var(--margem) 56px" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 40, paddingTop: 40 }}>
-            <div style={{ flex: "1 1 520px", minWidth: 0, display: "flex", flexDirection: "column", gap: 28 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 40, paddingTop: 12 }}>
+            <div style={{ flex: "1 1 520px", minWidth: 0, display: "flex", flexDirection: "column", gap: 22 }}>
               <span className="st-rotulo" style={{ color: "var(--text-muted)" }}>
                 Peças para motocicletas
               </span>
@@ -39,7 +37,7 @@ export default async function Home() {
                   margin: 0,
                   fontFamily: "var(--font-display)",
                   fontWeight: 800,
-                  fontSize: "clamp(72px, 10.2vw, 148px)",
+                  fontSize: "clamp(60px, 7.2vw, 104px)",
                   lineHeight: 0.86,
                   letterSpacing: "-.015em",
                   textTransform: "uppercase",
@@ -50,15 +48,16 @@ export default async function Home() {
                 aguentam
                 <br />o <span style={{ color: "var(--brand)" }}>giro</span>
               </h1>
-              <p style={{ margin: 0, fontSize: 20, lineHeight: "32px", color: "var(--text-secondary)", maxWidth: 520 }}>
+              <p style={{ margin: 0, fontSize: 18, lineHeight: "28px", color: "var(--text-secondary)", maxWidth: 520 }}>
                 O koi sobe o rio sem parar, contra a correnteza. As peças MotoKoi foram feitas para o mesmo: aguentar,
                 todo dia.
               </p>
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "16px 24px" }}>
-                <Link className="mk-btn mk-btn--dark mk-btn--lg" href="/catalogo">
-                  Ver o catálogo <Icone nome="arrow-right" />
+              <BuscaPorMoto motos={motos} anoAtual={ano} />
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 24px" }}>
+                <Link href="/catalogo" style={{ ...linkTexto, padding: "8px 0" }}>
+                  Ver o catálogo
                 </Link>
-                <Link href="/seja-revendedor" style={linkTexto}>
+                <Link href="/seja-revendedor" style={{ ...linkTexto, padding: "8px 0" }}>
                   Seja revendedor
                 </Link>
               </div>
@@ -182,53 +181,6 @@ export default async function Home() {
           </div>
         </section>
 
-        <section
-          style={{
-            background: "var(--bg-subtle)",
-            padding: "112px var(--margem)",
-            display: "flex",
-            flexDirection: "column",
-            gap: 32,
-          }}
-        >
-          <span className="st-rotulo">Busca por aplicação</span>
-          <h2 className="st-h2">Qual é a sua moto?</h2>
-          <form action="/catalogo" style={{ maxWidth: 880 }}>
-            <label
-              style={{ display: "flex", alignItems: "center", gap: 16, padding: "12px 0", borderBottom: "2px solid var(--text)" }}
-            >
-              <span style={{ fontSize: 28, color: "var(--text-muted)" }}>
-                <Icone nome="search" />
-              </span>
-              <input
-                name="busca"
-                aria-label="Buscar modelo de moto"
-                placeholder="Digite o modelo: Titan 150, Biz 125, YBR…"
-                style={{ all: "unset", flexGrow: 1, minWidth: 0, fontSize: "clamp(20px, 2.2vw, 28px)", lineHeight: "40px" }}
-              />
-            </label>
-          </form>
-          <div role="group" aria-label="Modelos mais buscados" style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-            {motos.map((moto) => (
-              <Link
-                key={moto.slug}
-                href={{ pathname: "/catalogo", query: { moto: moto.slug } }}
-                style={{
-                  font: "600 16px/20px var(--font-sans)",
-                  padding: "14px 20px",
-                  borderRadius: 999,
-                  border: "1.5px solid var(--border-strong)",
-                  background: "var(--bg)",
-                  color: "var(--text)",
-                  textDecoration: "none",
-                }}
-              >
-                {moto.nome}
-              </Link>
-            ))}
-          </div>
-        </section>
-
         <section style={{ padding: "112px var(--margem)", display: "flex", flexDirection: "column", gap: 56 }}>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: "24px 64px" }}>
             <div style={tituloSecao}>
@@ -244,37 +196,28 @@ export default async function Home() {
               resistir ao uso de todo dia.
             </p>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 40 }}>
-            {valores.map((v) => (
-              <div
-                key={v.titulo}
-                style={{
-                  flex: "1 1 280px",
-                  minWidth: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 16,
-                  paddingTop: 24,
-                  borderTop: "1.5px solid var(--text)",
-                }}
-              >
-                <h3
-                  style={{
-                    margin: 0,
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 800,
-                    fontSize: "clamp(40px, 4.4vw, 64px)",
-                    lineHeight: 0.95,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {v.titulo}
-                </h3>
-                <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)", maxWidth: 360 }}>
-                  {v.texto}
-                </p>
-              </div>
-            ))}
+          {conteudo.numeros.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 40 }}>
+              {conteudo.numeros.map((n) => (
+                <div key={n.rotulo} style={{ flex: "1 1 220px", minWidth: 0, display: "flex", flexDirection: "column", gap: 10, paddingTop: 24, borderTop: "1.5px solid var(--text)" }}>
+                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(56px, 6vw, 88px)", lineHeight: 0.9, color: "var(--brand)" }}>{n.valor}</span>
+                  <span style={{ fontSize: 16, lineHeight: "24px", color: "var(--text-secondary)", maxWidth: 260 }}>{n.rotulo}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 24px", padding: "20px 24px", background: "var(--bg-subtle)", borderRadius: 8 }}>
+            <span className="mk-badge" style={{ background: "var(--text)", color: "var(--text-inverse)" }}>
+              Inmetro
+            </span>
+            <span style={{ fontSize: 15, lineHeight: "24px", color: "var(--text-secondary)" }}>
+              {certificado
+                ? `${certificado.nome} certificado pelo Inmetro, registro nº ${certificado.inmetro}`
+                : '[SE O KIT TIVER CERTIFICAÇÃO: "Kit transmissão certificado pelo Inmetro, registro nº ..."]'}
+            </span>
+            <Link href="/garantia" style={{ fontWeight: 600, fontSize: 15, lineHeight: "24px", marginLeft: "auto" }}>
+              Como funciona a garantia
+            </Link>
           </div>
         </section>
 
@@ -308,7 +251,7 @@ export default async function Home() {
               </Link>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 40 }}>
-              {numeros.map((n) => (
+              {numerosRevenda.map((n) => (
                 <div
                   key={n.numero}
                   style={{

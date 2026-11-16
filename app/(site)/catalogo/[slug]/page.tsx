@@ -6,6 +6,7 @@ import { Cabecalho } from "@/components/Cabecalho";
 import { CartaoProduto } from "@/components/CartaoProduto";
 import { EspacoFoto } from "@/components/EspacoFoto";
 import { Icone } from "@/components/Icone";
+import { obterConteudo } from "@/lib/conteudo";
 import { listarProdutos } from "@/lib/produtos";
 import { Galeria } from "./Galeria";
 
@@ -39,6 +40,7 @@ const th = {
   textTransform: "uppercase",
   color: "var(--text-muted)",
 } as const;
+const garantia = { display: "flex", flexWrap: "wrap", alignItems: "center", gap: "4px 16px", padding: "14px 0", borderBottom: "1px solid var(--border)" } as const;
 const td = { padding: "14px 0", borderBottom: "1px solid var(--border)", color: "var(--text-secondary)" };
 
 export default function PaginaProduto({ params }: Props) {
@@ -57,7 +59,7 @@ export default function PaginaProduto({ params }: Props) {
 
 async function Conteudo({ params }: Pick<Props, "params">) {
   const { slug } = await params;
-  const produtos = await listarProdutos();
+  const [produtos, conteudo] = await Promise.all([listarProdutos(), obterConteudo()]);
   const produto = produtos.find((p) => p.slug === slug);
   if (!produto) notFound();
 
@@ -148,9 +150,18 @@ async function Conteudo({ params }: Pick<Props, "params">) {
             >
               {produto.nome}
             </h1>
-            <span style={{ fontWeight: 500, fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
-              Cód. [CÓDIGO]
-            </span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 20px", fontWeight: 500, fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+              <span>Cód. MotoKoi {produto.codigo ?? "[CÓDIGO]"}</span>
+              {produto.codigosOriginais.length > 0 ? (
+                produto.codigosOriginais.map((c) => (
+                  <span key={c.fabricante + c.codigo}>
+                    Cód. original {c.fabricante} {c.codigo}
+                  </span>
+                ))
+              ) : (
+                <span>Cód. original [CÓDIGO ORIGINAL]</span>
+              )}
+            </div>
             <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)", maxWidth: 520 }}>
               {produto.descricao ?? "[DESCRIÇÃO DA PEÇA]"}
             </p>
@@ -188,10 +199,42 @@ async function Conteudo({ params }: Pick<Props, "params">) {
               <Link className="mk-btn mk-btn--dark mk-btn--lg" href="/onde-comprar">
                 <Icone nome="map-pin" /> Onde comprar
               </Link>
-              <a className="mk-btn mk-btn--secondary mk-btn--lg" href="#">
+              <a className="mk-btn mk-btn--secondary mk-btn--lg" href={conteudo.whatsapp?.link ?? "#"}>
                 <Icone nome="message" /> Falar no WhatsApp
               </a>
             </div>
+            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", borderTop: "1px solid var(--border)" }}>
+              <li style={garantia}>
+                <span style={{ fontSize: 22, color: "var(--brand)" }}>
+                  <Icone nome="shield" />
+                </span>
+                <span style={{ flex: "1 1 200px", fontSize: 15, lineHeight: "24px" }}>
+                  <b style={{ fontWeight: 600 }}>Garantia de {produto.garantiaMeses ?? conteudo.garantiaMeses ?? "[N]"} meses</b> contra defeito de fabricação
+                </span>
+                <Link href="/garantia" style={{ fontWeight: 600, fontSize: 14, lineHeight: "20px" }}>
+                  Como acionar
+                </Link>
+              </li>
+              {produto.inmetro && (
+                <li style={garantia}>
+                  <span className="mk-badge" style={{ background: "var(--text)", color: "var(--text-inverse)" }}>
+                    Inmetro
+                  </span>
+                  <span style={{ flex: "1 1 200px", fontSize: 15, lineHeight: "24px" }}>Registro nº {produto.inmetro}</span>
+                </li>
+              )}
+              {produto.fichaTecnica && (
+                <li style={garantia}>
+                  <span style={{ fontSize: 22, color: "var(--text-muted)" }}>
+                    <Icone nome="file" />
+                  </span>
+                  <span style={{ flex: "1 1 200px", fontSize: 15, lineHeight: "24px" }}>Ficha técnica e instruções de instalação</span>
+                  <a href={produto.fichaTecnica} style={{ fontWeight: 600, fontSize: 14, lineHeight: "20px" }}>
+                    Baixar PDF
+                  </a>
+                </li>
+              )}
+            </ul>
             <div
               style={{
                 display: "flex",

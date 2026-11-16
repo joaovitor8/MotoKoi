@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { obterConteudo } from "@/lib/conteudo";
 import { listarCategorias } from "@/lib/produtos";
 
 const titulo = {
@@ -14,7 +15,7 @@ const link = { fontSize: 15, lineHeight: "24px", color: "var(--text)", textDecor
 const coluna = { display: "flex", flexDirection: "column", gap: 4 } as const;
 
 export async function Rodape() {
-  const categorias = await listarCategorias();
+  const [categorias, conteudo] = await Promise.all([listarCategorias(), obterConteudo()]);
   return (
     <footer
       style={{
@@ -54,11 +55,19 @@ export async function Rodape() {
             <Link href="/seja-revendedor" style={link}>
               Seja revendedor
             </Link>
+            <Link href="/garantia" style={link}>
+              Garantia
+            </Link>
+            {conteudo.catalogoPdf && (
+              <a href={conteudo.catalogoPdf} style={link}>
+                Catálogo em PDF
+              </a>
+            )}
           </div>
           <div style={coluna}>
             <span style={titulo}>Contato</span>
-            <a href="#" style={link}>
-              WhatsApp [NÚMERO]
+            <a href={conteudo.whatsapp?.link ?? "#"} style={link}>
+              WhatsApp {conteudo.whatsapp?.numero ?? "[NÚMERO]"}
             </a>
             <a href="https://www.instagram.com/moto.koi/" style={link}>
               Instagram @moto.koi

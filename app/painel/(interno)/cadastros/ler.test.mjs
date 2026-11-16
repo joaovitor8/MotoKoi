@@ -45,3 +45,11 @@ test("erros: obrigatório vazio, tamanho, opção fora da lista e número torto"
   assert.match(erro({ latitude: "abc" }), /Latitude/);
   assert.equal(lerCampos(CADASTROS.lojas, formulario({ ...base, nome: "", cep: "16010-000" }), true).valores.cep, "16010-000");
 });
+
+test("depoimento: data vazia vira nulo e a marcação desligada vira falso", () => {
+  const base = { nome: "João", loja: "Loja X", cidade: "Birigui", uf: "sp", texto: "Peça boa, cliente volta." };
+  const { erro, linha } = lerCampos(CADASTROS.depoimentos, formulario(base), true);
+  assert.equal(erro, undefined);
+  assert.deepEqual([linha.autorizado_em, linha.publicado, linha.uf, "slug" in linha], [null, false, "SP", false]);
+  assert.equal(lerCampos(CADASTROS.depoimentos, formulario({ ...base, autorizado_em: "2026-11-15", publicado: "on" }), true).linha.autorizado_em, "2026-11-15");
+});

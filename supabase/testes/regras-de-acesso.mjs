@@ -90,6 +90,56 @@ await como('authenticated', ADMIN, async () => {
   const st2 = await erro(`insert into storage.objects (bucket_id, name) values ('outro','x.webp')`); t('não envia foto para outro bucket', !!st2.erro);
 });
 
+console.log('\nConcorrência: códigos originais, busca, garantia, conteúdo');
+await como('authenticated', ADMIN, async () => {
+  const co = await erro(`insert into public.produto_codigos_originais (produto_id, fabricante, codigo) select id, 'Honda', '16100-KVS-J01' from public.produtos where slug='carburador-titan-150' returning codigo_busca`);
+  t('admin cadastra código original (normaliza para busca)', !co.erro && co.r.rows[0].codigo_busca === '16100KVSJ01', co.erro || JSON.stringify(co.r?.rows));
+  const g = await erro(`update public.produtos set garantia_meses = 6, inmetro_registro = '001234/2026' where slug='carburador-titan-150'`); t('admin define garantia e Inmetro do produto', !g.erro, g.erro);
+  const cfg = await db.query(`update public.configuracoes_site set garantia_meses_padrao = 3, garantia_prazo_resposta_dias = 10 returning atualizado_por`); t('admin muda garantia padrão (registra autor)', cfg.rows[0].atualizado_por === ADMIN);
+  const dep = await erro(`insert into public.depoimentos (nome, loja, cidade, uf, texto, publicado) values ('João','Loja X','Araçatuba','SP','Peça boa, cliente volta.', true)`); t('depoimento publicado sem autorização é recusado', !!dep.erro);
+  const dep2 = await erro(`insert into public.depoimentos (nome, loja, cidade, uf, texto, autorizado_em, publicado) values ('João','Loja X','Araçatuba','SP','Peça boa, cliente volta.', current_date, true)`); t('depoimento com autorização é publicado', !dep2.erro, dep2.erro);
+  await db.exec(`insert into public.depoimentos (nome, loja, cidade, uf, texto) values ('Maria','Loja Y','Birigui','SP','Ainda esperando autorização.')`);
+  await db.exec(`update public.numeros_marca set valor='120', publicado=true where ordem=1`);
+  await db.exec(`insert into public.materiais (titulo, tipo, caminho, publico) values ('Catálogo completo','catalogo','catalogo/motokoi.pdf',true), ('Rascunho','outro','x/rascunho.pdf',false)`);
+  const nova = await erro(`insert into public.configuracoes_site (id) values (true)`); t('configurações têm uma linha só', !!nova.erro);
+  const pdf = await erro(`insert into storage.objects (bucket_id, name) values ('materiais','catalogo/motokoi.pdf')`); t('admin envia PDF para materiais', !pdf.erro, pdf.erro);
+});
+await como('anon', null, async () => {
+  const q = async (...a) => (await db.query(`select slug from public.buscar_produtos($1, $2, $3, $4) order by slug`, a)).rows.map(r => r.slug);
+  t('busca por código original com traço', (await q('16100-kvs', null, null, null)).join() === 'carburador-titan-150');
+  t('busca por código original sem traço', (await q('16100KVSJ01', null, null, null)).join() === 'carburador-titan-150');
+  t('busca por nome da moto (Biz)', (await q('biz', null, null, null)).join() === 'camara-de-ar-aro-14');
+  t('busca por texto no nome', (await q('carburador', null, null, null)).length === 2);
+  t('filtro categoria + moto', (await q(null, 'embreagem', 'honda-cg-150-titan', null)).join() === 'disco-de-embreagem-titan-150');
+  const ybr = await q(null, null, 'yamaha-ybr-125', 2005), ybr2 = await q(null, null, 'yamaha-ybr-125', 2012);
+  t('filtro por ano respeita a faixa (YBR 2000–2008)', ybr.length === 1 && ybr2.length === 0, JSON.stringify([ybr, ybr2]));
+  t('busca não mostra rascunho', !(await q('capa', null, null, null)).length);
+  const n = await db.query(`select count(*)::int n from public.numeros_marca`); t('vê só números publicados (1 de 4)', n.rows[0].n === 1, n.rows[0].n);
+  const d = await db.query(`select count(*)::int n from public.depoimentos`); t('vê só depoimentos publicados', d.rows[0].n === 1);
+  const m = await db.query(`select count(*)::int n from public.materiais`); t('vê só materiais públicos', m.rows[0].n === 1);
+  const c = await db.query(`select garantia_meses_padrao from public.configuracoes_site`); t('lê a garantia padrão', c.rows[0].garantia_meses_padrao === 3);
+  const co = await db.query(`select count(*)::int n from public.produto_codigos_originais`); t('lê códigos originais de produto publicado', co.rows[0].n === 1);
+  const up = await erro(`update public.configuracoes_site set garantia_meses_padrao = 99`); t('não muda configurações', !!up.erro || up.r.affectedRows === 0);
+  const dp = await erro(`insert into public.depoimentos (nome, loja, cidade, uf, texto) values ('X','Y','Z','SP','texto qualquer aqui')`); t('não cria depoimento', !!dp.erro);
+  const pdf = await erro(`insert into storage.objects (bucket_id, name) values ('materiais','x.pdf')`); t('não envia arquivo', !!pdf.erro);
+});
+await como('authenticated', COMUM, async () => {
+  const up = await erro(`update public.numeros_marca set valor='9999'`); t('logado comum não edita números', !!up.erro || up.r.affectedRows === 0);
+  const pdf = await erro(`insert into storage.objects (bucket_id, name) values ('materiais','x.pdf')`); t('logado comum não envia arquivo', !!pdf.erro);
+});
+
+await como('authenticated', ADMIN, async () => {
+  const cab = (await db.query(`select id from public.categorias where slug='cabos'`)).rows[0].id;
+  const sp = await erro(`select public.salvar_produto('${JSON.stringify({ nome: 'Cabo Garantido', slug: 'cabo-garantido', categoria_id: cab, status: 'publicado', garantia_meses: 6, inmetro_registro: '001234/2026', codigos: [{ fabricante: 'Honda', codigo: '17910-KVS-900' }, { fabricante: 'Yamaha', codigo: '5VL-F6311' }] })}'::jsonb) id`);
+  const id = sp.r?.rows[0].id;
+  const r1 = id && (await db.query(`select garantia_meses g, inmetro_registro i, (select count(*)::int from public.produto_codigos_originais where produto_id=${id}) c from public.produtos where id=${id}`)).rows[0];
+  t('salvar_produto grava garantia, Inmetro e códigos originais', !sp.erro && r1.g === 6 && r1.i === '001234/2026' && r1.c === 2, sp.erro || JSON.stringify(r1));
+  await db.query(`select public.salvar_produto('${JSON.stringify({ id, nome: 'Cabo Garantido', categoria_id: cab, status: 'publicado', codigos: [{ fabricante: 'Honda', codigo: '17910-KVS-901' }] })}'::jsonb)`);
+  const r2 = (await db.query(`select garantia_meses g, (select string_agg(codigo_busca, ',') from public.produto_codigos_originais where produto_id=${id}) c from public.produtos where id=${id}`)).rows[0];
+  t('salvar_produto troca os códigos e limpa a garantia vazia', r2.g === null && r2.c === '17910KVS901', JSON.stringify(r2));
+  await db.query(`delete from public.produtos where id=${id}`);
+});
+
 const fk = await db.query(`select conrelid::regclass::text t, a.attname c from pg_constraint c join pg_attribute a on a.attrelid=c.conrelid and a.attnum=any(c.conkey) where c.contype='f' and connamespace='public'::regnamespace and not exists (select 1 from pg_index i where i.indrelid=c.conrelid and a.attnum = i.indkey[0])`);
 t('toda chave estrangeira tem índice', fk.rows.length === 0, JSON.stringify(fk.rows));
 console.log(`\n${ok} ok, ${falhas} falhas`);

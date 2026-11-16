@@ -7,6 +7,7 @@ export async function proxy(request: NextRequest) {
   let resposta = NextResponse.next({ request });
 
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
+    cookieOptions: { secure: process.env.NODE_ENV === "production" }, // cookie de sessão só trafega por HTTPS
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll(novos, cabecalhos) {

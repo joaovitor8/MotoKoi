@@ -26,7 +26,7 @@ export async function salvarCadastro(chave: string, id: number | null, _anterior
   const { error } = id === null ? await supabase.from(cfg.tabela).insert(linha) : await supabase.from(cfg.tabela).update(linha).eq("id", id);
   if (error) {
     if (error.code === "23505") return { erro: `Já existe ${cfg.feminino ? "uma" : "um"} ${cfg.um} com esses dados.`, valores };
-    if (error.code === "23514") return { erro: "Algum campo está em formato inválido. Confira sigla do estado, CEP e coordenadas.", valores };
+    if (error.code === "23514") return { erro: cfg.erroDeRegra ?? "Algum campo está em formato inválido. Confira sigla do estado, CEP e coordenadas.", valores };
     console.error(`${cfg.titulo} não salvo:`, error.code, error.message);
     return { erro: "Não foi possível salvar. Tente de novo em alguns instantes.", valores };
   }

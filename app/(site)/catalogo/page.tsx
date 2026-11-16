@@ -4,20 +4,22 @@ import { Suspense } from "react";
 import { Cabecalho } from "@/components/Cabecalho";
 import { CartaoProduto } from "@/components/CartaoProduto";
 import { Icone } from "@/components/Icone";
+import { SeletorQueEnvia } from "@/components/SeletorQueEnvia";
+import { anoAtual as lerAnoAtual, obterConteudo } from "@/lib/conteudo";
+import type { Filtros } from "@/lib/filtro";
 import { filtrarProdutos, listarCategorias, listarMotos, listarProdutos } from "@/lib/produtos";
 
 export const metadata: Metadata = { title: "Catálogo" };
 
 const POR_PAGINA = 9; // 3 × 3, como na tela de referência
 
-// `motos` e `categoria` são slugs. Mudar um filtro volta para a página 1.
-type Filtros = { categoria?: string; motos: string[]; busca?: string };
-
-function endereco({ categoria, motos, busca }: Filtros, pagina = 1) {
+// Os filtros vivem na URL (`motos` e `categoria` são slugs). Mudar um filtro volta para a página 1.
+function endereco({ categoria, motos, ano, busca }: Filtros, pagina = 1) {
   const q = new URLSearchParams();
   if (busca) q.set("busca", busca);
   if (categoria) q.set("categoria", categoria);
   motos.forEach((m) => q.append("moto", m));
+  if (ano) q.set("ano", String(ano));
   if (pagina > 1) q.set("pagina", String(pagina));
   return q.size ? `/catalogo?${q}` : "/catalogo";
 }
@@ -48,18 +50,27 @@ export default function Catalogo({ searchParams }: PageProps<"/catalogo">) {
 }
 
 async function Conteudo({ searchParams }: Pick<PageProps<"/catalogo">, "searchParams">) {
-  const [sp, categorias, motos, produtos] = await Promise.all([
+  const [sp, categorias, motos, produtos, conteudo, anoAtual] = await Promise.all([
     searchParams,
     listarCategorias(),
     listarMotos(),
     listarProdutos(),
+    obterConteudo(),
+    lerAnoAtual(),
   ]);
   const texto = (v: string | string[] | undefined) => [v].flat()[0]?.trim() || undefined;
   const filtros: Filtros = {
     categoria: texto(sp.categoria),
     motos: [sp.moto].flat().filter((m): m is string => !!m?.trim()),
+    ano: Number(texto(sp.ano)) || undefined,
     busca: texto(sp.busca),
   };
+  // No seletor de ano aparecem do ano atual até 1980.
+  const outrosFiltros: [string, string][] = [
+    ...(filtros.busca ? [["busca", filtros.busca] as [string, string]] : []),
+    ...(filtros.categoria ? [["categoria", filtros.categoria] as [string, string]] : []),
+    ...filtros.motos.map((m) => ["moto", m] as [string, string]),
+  ];
   const encontrados = filtrarProdutos(produtos, filtros);
   const paginas = Math.max(1, Math.ceil(encontrados.length / POR_PAGINA));
   // Página fora do intervalo (ou texto que não é número) cai na mais próxima que existe.
@@ -91,6 +102,7 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/catalogo">, "searchPa
           {filtros.motos.map((m) => (
             <input key={m} type="hidden" name="moto" value={m} />
           ))}
+          {filtros.ano && <input type="hidden" name="ano" value={filtros.ano} />}
           <label
             style={{ display: "flex", alignItems: "center", gap: 16, padding: "12px 0", borderBottom: "2px solid var(--text)" }}
           >
@@ -101,7 +113,7 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/catalogo">, "searchPa
               name="busca"
               defaultValue={filtros.busca}
               aria-label="Buscar no catálogo"
-              placeholder="Buscar por peça, código ou moto"
+              placeholder="Peça, código MotoKoi, código original ou moto"
               style={{ all: "unset", flexGrow: 1, minWidth: 0, fontSize: 22, lineHeight: "36px" }}
             />
           </label>
@@ -167,6 +179,29 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/catalogo">, "searchPa
               );
             })}
           </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <span style={tituloFiltro}>Ano da moto</span>
+            <SeletorQueEnvia
+              acao="/catalogo"
+              nome="ano"
+              rotulo="Ano da moto"
+              valor={filtros.ano ? String(filtros.ano) : ""}
+              opcoes={[{ valor: "", texto: "Todos os anos" }, ...Array.from({ length: anoAtual - 1979 }, (_, i) => ({ valor: String(anoAtual - i), texto: String(anoAtual - i) }))]}
+              ocultos={outrosFiltros}
+              className="st-seletor"
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 44, padding: "0 14px", border: "1.5px solid var(--border-strong)", borderRadius: 4, fontSize: 16, lineHeight: "24px" }}
+            />
+            <span style={{ fontSize: 13, lineHeight: "20px", color: "var(--text-muted)" }}>Mostra só as peças que servem no ano escolhido.</span>
+          </div>
+          {conteudo.catalogoPdf && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: 20, background: "var(--bg-subtle)", borderRadius: 8 }}>
+              <span style={{ fontWeight: 600, fontSize: 15, lineHeight: "22px" }}>Catálogo completo</span>
+              <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-secondary)" }}>Todas as peças, códigos e aplicações num arquivo só.</span>
+              <a className="mk-btn mk-btn--secondary" href={conteudo.catalogoPdf} style={{ alignSelf: "flex-start" }}>
+                <Icone nome="download" /> Baixar PDF
+              </a>
+            </div>
+          )}
         </aside>
 
         <div style={{ flex: "1 1 640px", minWidth: 0, display: "flex", flexDirection: "column", gap: 32 }}>

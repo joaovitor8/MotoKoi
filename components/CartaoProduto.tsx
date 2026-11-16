@@ -50,7 +50,7 @@ export function CartaoProduto({
           </span>
         )}
         <span style={{ fontWeight: 500, fontSize: 12, lineHeight: "16px", color: "var(--text-muted)" }}>
-          Cód. {produto.codigo ?? "[CÓDIGO]"}
+          Cód. {produto.codigo ?? "[CÓDIGO]"} · Original {produto.codigosOriginais[0]?.codigo ?? "[CÓDIGO ORIGINAL]"}
         </span>
       </div>
     </article>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { equipe } from "@/lib/painel";
+import { dataBR, equipe } from "@/lib/painel";
 import { CADASTROS, type Cadastro, type ChaveCadastro } from "./config";
 import { FormularioCadastro } from "./FormularioCadastro";
 
@@ -21,11 +21,21 @@ export async function PaginaCadastro({ chave, searchParams }: { chave: ChaveCada
     const valor = r[nome];
     if (c.tipo === "marcacao") return valor ? "Sim" : "Não";
     if (valor === null || valor === "") return "—";
+    if (c.tipo === "data") return dataBR(`${valor}T12:00:00`);
     return c.tipo === "selecao" ? (c.opcoes?.[String(valor)] ?? String(valor)) : String(valor);
   };
 
   return (
     <>
+      {cfg.voltarPara && (
+        <nav aria-label="Você está em" style={{ display: "flex", gap: 8, fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+          <Link href={cfg.voltarPara} style={{ color: "var(--text-muted)" }}>
+            Conteúdo do site
+          </Link>
+          <span aria-hidden="true">/</span>
+          <span style={{ color: "var(--text)" }}>{cfg.titulo}</span>
+        </nav>
+      )}
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <h1 className="ad-h1">{cfg.titulo}</h1>
         <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>

@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 export async function clienteDoPainel() {
   const guardados = await cookies();
   return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
+    cookieOptions: { secure: process.env.NODE_ENV === "production" }, // cookie de sessão só trafega por HTTPS
     cookies: {
       getAll: () => guardados.getAll(),
       setAll(novos) {

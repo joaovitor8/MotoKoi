@@ -4,7 +4,7 @@
 export type Campo = {
   nome: string; // nome da coluna no banco
   rotulo: string;
-  tipo: "texto" | "numero" | "selecao" | "marcacao";
+  tipo: "texto" | "numero" | "selecao" | "marcacao" | "data";
   obrigatorio?: boolean;
   max?: number;
   dica?: string;
@@ -21,6 +21,8 @@ export type Cadastro = {
   campos: Campo[];
   colunas: string[]; // campos que aparecem na lista
   slugDe?: string[]; // campos que formam o slug (pedaço da URL), gerado só ao criar
+  erroDeRegra?: string; // mensagem quando o banco recusa por uma regra (check) da tabela
+  voltarPara?: string; // de onde a tela é aberta, quando não está no menu
 };
 
 const ordem: Campo = { nome: "ordem", rotulo: "Ordem", tipo: "numero", padrao: "0", dica: "Número menor aparece primeiro." };
@@ -73,6 +75,40 @@ export const CADASTROS = {
       { nome: "ativo", rotulo: "Mostrar no site", tipo: "marcacao", padrao: true },
     ],
     colunas: ["nome", "tipo", "cidade", "uf", "ativo"],
+  },
+  numeros: {
+    tabela: "numeros_marca",
+    titulo: "Números da marca",
+    um: "número",
+    feminino: false,
+    campos: [
+      { nome: "valor", rotulo: "Número", tipo: "texto", obrigatorio: true, max: 12, dica: "Como aparece no site. Ex.: 5.500, +300, 12" },
+      { nome: "rotulo", rotulo: "Legenda", tipo: "texto", obrigatorio: true, max: 80, dica: "Ex.: peças no catálogo" },
+      ordem,
+      { nome: "publicado", rotulo: "Mostrar no site", tipo: "marcacao", padrao: false },
+    ],
+    colunas: ["valor", "rotulo", "publicado"],
+    erroDeRegra: "Algum campo passou do tamanho permitido.",
+    voltarPara: "/painel/conteudo",
+  },
+  depoimentos: {
+    tabela: "depoimentos",
+    titulo: "Depoimentos",
+    um: "depoimento",
+    feminino: false,
+    campos: [
+      { nome: "nome", rotulo: "Nome do responsável", tipo: "texto", obrigatorio: true, max: 80 },
+      { nome: "loja", rotulo: "Loja", tipo: "texto", obrigatorio: true, max: 120 },
+      { nome: "cidade", rotulo: "Cidade", tipo: "texto", obrigatorio: true, max: 80 },
+      { nome: "uf", rotulo: "Estado (sigla)", tipo: "texto", obrigatorio: true, max: 2, maiusculas: true, dica: "Duas letras. Ex.: SP" },
+      { nome: "texto", rotulo: "Depoimento", tipo: "texto", obrigatorio: true, max: 400, dica: "De 10 a 400 caracteres, nas palavras do revendedor." },
+      { nome: "autorizado_em", rotulo: "Data da autorização por escrito", tipo: "data", dica: "Sem esta data o depoimento não pode ser publicado." },
+      ordem,
+      { nome: "publicado", rotulo: "Mostrar no site", tipo: "marcacao", padrao: false },
+    ],
+    colunas: ["nome", "loja", "cidade", "publicado"],
+    erroDeRegra: "Para publicar, informe a data da autorização por escrito. Confira também a sigla do estado e o tamanho do depoimento (10 a 400 caracteres).",
+    voltarPara: "/painel/conteudo",
   },
 } satisfies Record<string, Cadastro>;
 

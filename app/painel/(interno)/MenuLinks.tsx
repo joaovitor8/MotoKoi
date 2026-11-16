@@ -10,6 +10,7 @@ const itens = [
   { href: "/painel/motos", rotulo: "Motos", icone: "wrench" },
   { href: "/painel/revenda", rotulo: "Pedidos de revenda", icone: "message" },
   { href: "/painel/lojas", rotulo: "Lojas", icone: "map-pin" },
+  { href: "/painel/conteudo", rotulo: "Conteúdo do site", icone: "chart" },
 ] as const;
 
 // `novos` é quantos cadastros de revenda ainda estão na situação "novo".

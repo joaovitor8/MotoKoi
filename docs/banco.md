@@ -8,8 +8,10 @@ Arquivos:
 - `supabase/migrations/20261113230852_storage_fotos.sql`: bucket `produtos` para as fotos.
 - `supabase/migrations/20261113230906_resumo_produto_categoria.sql`: coluna `resumo` em produtos e categorias.
 - `supabase/migrations/20261114175214_salvar_produto.sql`: função `salvar_produto`, que o painel usa para gravar um produto com ficha, itens da caixa e motos numa transação só.
+- `supabase/migrations/20261115193429_concorrencia.sql`: o que veio da análise dos concorrentes (códigos originais, garantia, Inmetro, números da marca, materiais, depoimentos, busca do catálogo e bucket `materiais`).
+- `supabase/migrations/20261115193447_salvar_produto_campos_novos.sql`: `salvar_produto` passa a gravar garantia, Inmetro e códigos originais.
 - `supabase/seed.sql`: dados para desenvolvimento (categorias, motos, 9 produtos reais sem código nem foto, a loja da Mac Atacado).
-- `supabase/testes/regras-de-acesso.mjs`: 37 testes que sobem um Postgres local e conferem quem pode ler e escrever o quê.
+- `supabase/testes/regras-de-acesso.mjs`: 63 testes que sobem um Postgres local e conferem quem pode ler e escrever o quê.
 
 ## Diagrama
 
@@ -20,6 +22,7 @@ erDiagram
   produtos ||--o{ produto_itens_caixa : "na caixa"
   produtos ||--o{ produto_fotos : "fotos"
   produtos ||--o{ produto_motos : "serve em"
+  produtos ||--o{ produto_codigos_originais : "substitui"
   motos ||--o{ produto_motos : "compatível com"
   perfis ||--o{ produtos : "última alteração"
   auth_users ||--|| perfis : "é da equipe"
@@ -75,9 +78,33 @@ erDiagram
     text documento
     text situacao
     text anotacoes }
+  produto_codigos_originais { bigint id PK
+    bigint produto_id FK
+    text fabricante
+    text codigo
+    text codigo_busca }
+  configuracoes_site { bool id PK
+    smallint garantia_meses_padrao
+    text whatsapp
+    text catalogo_pdf_caminho }
+  numeros_marca { bigint id PK
+    text valor
+    text rotulo
+    bool publicado }
+  materiais { bigint id PK
+    text titulo
+    text tipo
+    text caminho
+    bool publico }
+  depoimentos { bigint id PK
+    text nome
+    text loja
+    text texto
+    date autorizado_em
+    bool publicado }
 ```
 
-`pontos_venda` e `cadastros_revenda` não se ligam a nenhuma outra tabela.
+`pontos_venda`, `cadastros_revenda`, `configuracoes_site`, `numeros_marca`, `materiais` e `depoimentos` não se ligam a nenhuma outra tabela.
 
 ## Tabelas
 
@@ -93,6 +120,13 @@ erDiagram
 | `pontos_venda` | Lojas próprias e revendedores, com endereço e posição no mapa | Onde comprar |
 | `cadastros_revenda` | Formulário "Seja revendedor", com situação e anotações internas | Seja revendedor, Pedidos de revenda |
 | `perfis` | Quem da equipe pode entrar no painel | Painel |
+| `produto_codigos_originais` | Código da montadora que a peça substitui (Honda 16100-KVS-J01...). Vários por produto | Catálogo, Produto, busca, Editar produto |
+| `configuracoes_site` | Uma linha só: garantia padrão, prazo de resposta, WhatsApp, PDF do catálogo | Garantia, Produto, Conteúdo do site |
+| `numeros_marca` | Números da Home e de A marca, com publicado/rascunho | Home, A marca, Conteúdo do site |
+| `materiais` | Arquivos para o lojista baixar (catálogo, fotos, fichas, logo) | Seja revendedor, Catálogo, Conteúdo do site |
+| `depoimentos` | Depoimentos de revendedores, com data da autorização | Seja revendedor, Conteúdo do site |
+
+Em `produtos` entraram também `garantia_meses` (vazio = usa o padrão), `inmetro_registro` e `ficha_tecnica_caminho`.
 
 View `categorias_com_contagem`: categorias com o resumo e o total de produtos publicados, para a barra lateral do catálogo e a lista "A linha" da Home.
 
@@ -106,6 +140,10 @@ View `categorias_com_contagem`: categorias com o resumo e o total de produtos pu
 - **`codigo` pode ficar vazio**, mas não pode repetir. Muitos códigos ainda dependem do dono.
 - **Situações e tipos como texto com `check`** (`'novo'`, `'em_contato'`...). Mudar uma lista depois é mais simples do que com `enum`.
 - **`slug`** é o pedaço da URL (`/catalogo/kit-transmissao-titan-150`). Só aceita letras minúsculas, números e hífen.
+- **Código original em tabela própria.** Uma peça pode substituir mais de um código (Honda e Yamaha, ou duas versões). A coluna `codigo_busca` é gerada pelo banco, só com letras e números, para "16100-KVS" e "16100kvs" acharem a mesma peça.
+- **`configuracoes_site` com uma linha só.** A chave é `true` com `check (id)`, então não existe segunda linha. O painel só faz `update`.
+- **Depoimento só publica com `autorizado_em`.** O `check` impede publicar sem registrar a autorização. Depoimento inventado em site de marca é propaganda enganosa.
+- **`slug`** é o pedaço da URL (`/catalogo/kit-transmissao-titan-150`). Só aceita letras minúsculas, números e hífen.
 
 ## Quem pode fazer o quê
 
@@ -115,7 +153,9 @@ View `categorias_com_contagem`: categorias com o resumo e o total de produtos pu
 | Criar, editar e apagar no catálogo | Não | Não | Sim |
 | Enviar cadastro de revenda | Sim, sempre como "novo" | Sim | Sim |
 | Ler e mudar cadastros de revenda | Não | Não | Sim |
-| Enviar fotos | Não | Não | Sim |
+| Enviar fotos e arquivos (PDF, ZIP) | Não | Não | Sim |
+| Ler números, depoimentos e materiais | Só publicados | Só publicados | Tudo |
+| Mudar garantia padrão e WhatsApp | Não | Não | Sim |
 
 Ser "da equipe" não é só fazer login: a pessoa precisa estar em `perfis` com `ativo = true`. A função `private.eh_admin()` faz essa checagem e fica num esquema que a API não expõe.
 
