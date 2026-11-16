@@ -41,6 +41,23 @@ t("SQL injection na busca não devolve produtos", !sql.includes("<article"));
 const xss = await (await pedir("/catalogo?busca=" + encodeURIComponent('"><img src=x onerror=alert(1)>'))).text();
 t("XSS na busca sai escapado", !xss.includes("<img src=x onerror") && xss.includes("&lt;img") || xss.includes("&quot;&gt;"));
 
+console.log("\nFormulário enviado de outro site é recusado (regra 16, CSRF)");
+// Reenvia o formulário de revenda como o navegador faria sem JavaScript, com o campo-isca preenchido (não grava nada).
+const pagina = await (await pedir("/seja-revendedor")).text();
+const enviarDe = (origem) => {
+  const corpo = new FormData();
+  for (const [, nome, valor = ""] of pagina.matchAll(/name="(\$ACTION[^"]*)"(?: value="([^"]*)")?/g)) corpo.set(nome, valor.replaceAll("&quot;", '"'));
+  corpo.set("site", "isca");
+  return pedir("/seja-revendedor", { method: "POST", body: corpo, headers: { Origin: origem } });
+};
+t("envio do próprio site é aceito", (await enviarDe(SITE)).status === 200);
+t("envio de outro domínio é recusado", (await enviarDe("https://site-malicioso.example")).status !== 200);
+
+console.log("\nLogin do painel (regra 1)");
+const auth = await (await banco("/auth/v1/settings")).json();
+t("cadastro público de contas desligado no Supabase", auth.disable_signup === true, "(Authentication > Sign In / Providers > Allow new users to sign up)");
+t("login anônimo desligado", auth.external?.anonymous_users === false);
+
 console.log("\nBanco pela API pública, como visitante (regras 3 e 9)");
 t("lê produtos publicados", (await banco("/rest/v1/produtos?select=slug&limit=1")).status === 200);
 t("não vê rascunhos", (await (await banco("/rest/v1/produtos?select=slug&status=eq.rascunho")).json()).length === 0);

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, type ReactNode } from "react";
 import { Icone } from "@/components/Icone";
 import { TIPOS_NEGOCIO } from "@/lib/revenda";
@@ -120,6 +121,9 @@ export function FormularioRevenda() {
           </span>
           Aceito receber o contato da MotoKoi por WhatsApp e e-mail.
         </label>
+        <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+          Usamos estes dados só para analisar o cadastro e falar com você. Veja a <Link href="/privacidade">Política de privacidade</Link>.
+        </p>
       </div>
       {estado.erro && (
         <p role="alert" style={{ flex: "1 1 100%", margin: 0, fontWeight: 600, fontSize: 15, lineHeight: "24px", color: "var(--text-danger)" }}>

@@ -4,6 +4,7 @@ import { Icone } from "@/components/Icone";
 import { equipe, quando } from "@/lib/painel";
 import { TIPOS_NEGOCIO } from "@/lib/revenda";
 import { mudarSituacao, salvarAnotacoes } from "./acoes";
+import { ExcluirCadastro } from "./ExcluirCadastro";
 
 export const metadata: Metadata = { title: "Pedidos de revenda" };
 
@@ -162,6 +163,7 @@ export default async function PedidosDeRevenda({ searchParams }: PageProps<"/pai
                   Recusar cadastro
                 </button>
               </form>
+              <ExcluirCadastro id={aberto.id} loja={aberto.nome_loja} />
             </div>
             {/* key: ao trocar de cadastro, o campo recomeça com as anotações do novo. */}
             <form key={aberto.id} action={salvarAnotacoes.bind(null, aberto.id)} style={{ display: "flex", flexDirection: "column", gap: 8 }}>

@@ -4,15 +4,15 @@ const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const dev = process.env.NODE_ENV === "development";
 
 // Content-Security-Policy: lista de onde o navegador pode carregar cada tipo de coisa. Tudo que não está aqui é
-// bloqueado, o que limita o estrago de um XSS. Além do próprio site, só entram o Supabase (dados, login, fotos)
-// e o Google Fonts.
+// bloqueado, o que limita o estrago de um XSS. Além do próprio site, só entra o Supabase (dados, login, fotos);
+// as fontes são servidas pelo próprio site, via next/font.
 // shortcut: 'unsafe-inline' em script-src porque o Next injeta scripts em linha; a alternativa sem isso (nonce)
 // obriga todas as páginas a serem geradas a cada acesso. Trocar se o site passar a exibir HTML vindo de usuários.
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self'",
   `img-src 'self' data: blob: ${supabase}`,
   `connect-src 'self' ${supabase} ${supabase.replace("https://", "wss://")}`,
   "object-src 'none'",

@@ -68,6 +68,9 @@ await como('authenticated', ADMIN, async () => {
   const p = await db.query(`select count(*)::int n from public.produtos`); t('vê também o rascunho (9)', p.rows[0].n === 9);
   const le = await db.query(`select count(*)::int n from public.cadastros_revenda`); t('lê os cadastros de revenda', le.rows[0].n === 1);
   const up = await db.query(`update public.cadastros_revenda set situacao='em_contato', anotacoes='Ligar sexta' returning atualizado_em > criado_em as mudou`); t('muda situação e anota', up.rows.length === 1);
+  await db.query('begin');
+  const ex = await db.query(`delete from public.cadastros_revenda returning id`); t('exclui cadastro de revenda (pedido de exclusão, LGPD)', ex.rows.length === 1);
+  await db.query('rollback'); // devolve a linha para os testes seguintes
   const np = await erro(`insert into public.produtos (nome, slug, categoria_id) select 'Teste', 'teste', id from public.categorias where slug='cabos' returning atualizado_por`); t('cria produto (sai como rascunho, com autor)', !np.erro && np.r.rows[0].atualizado_por === ADMIN, np.erro || JSON.stringify(np.r.rows));
   const ed = await db.query(`update public.produtos set status='publicado' where slug='teste' returning atualizado_por`); t('publica e registra quem alterou', ed.rows[0].atualizado_por === ADMIN);
   const cab = (await db.query(`select id from public.categorias where slug='cabos'`)).rows[0].id, tit = (await db.query(`select id from public.motos where slug='honda-cg-150-titan'`)).rows[0].id;

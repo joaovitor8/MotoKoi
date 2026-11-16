@@ -9,7 +9,7 @@ const itens = [
 
 // `atual` é o href da página aberta. Na Home não se passa nada: sem traço e sem linha embaixo, como na tela.
 // A Garantia não está no menu: passa o próprio endereço só para ganhar a linha, sem item marcado.
-export function Cabecalho({ atual }: { atual?: (typeof itens)[number]["href"] | "/garantia" }) {
+export function Cabecalho({ atual }: { atual?: (typeof itens)[number]["href"] | "/garantia" | "/privacidade" }) {
   return (
     <header
       style={{

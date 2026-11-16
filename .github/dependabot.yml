@@ -1,0 +1,8 @@
+# O GitHub abre um PR quando sai correção de segurança ou versão nova de um pacote (checklist de segurança, regra 21).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

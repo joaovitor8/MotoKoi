@@ -89,6 +89,9 @@ export async function Rodape() {
         }}
       >
         <span>© 2026 MotoKoi. Todos os direitos reservados.</span>
+        <Link href="/privacidade" style={{ color: "var(--text-muted)" }}>
+          Política de privacidade
+        </Link>
         <a href="https://www.macatacado.com.br/" style={{ color: "var(--text-muted)" }}>
           Também à venda na Mac Atacado
         </a>
