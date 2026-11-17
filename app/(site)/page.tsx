@@ -63,6 +63,7 @@ export default async function Home() {
               </div>
             </div>
             <div
+              className="st-coroa"
               style={{
                 flex: "1 1 420px",
                 maxWidth: 740,

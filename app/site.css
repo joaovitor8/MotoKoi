@@ -18,3 +18,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible, select:focus-visib
 label:not(.mk-check):not(.mk-field):has(> input:focus-visible), .mk-field__control:has(:focus-visible), .ad-in:has(:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
 .mk-field__control select:focus-visible, .ad-in select:focus-visible { outline: none; }
 .st-seletor:has(:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* Celular: a coroa da Home (e o "Contra a correnteza" ao lado dela) sai; o título e a busca ficam no topo. */
+@media (max-width: 933px) { .st-coroa { display: none; } }

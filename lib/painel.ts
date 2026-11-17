@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { cache } from "react";
 import { clienteDoPainel } from "./supabase-servidor";
 
@@ -6,6 +7,9 @@ import { clienteDoPainel } from "./supabase-servidor";
 // Sem login, ou com login fora da equipe (tabela perfis, ativo = true), volta para a tela de entrar.
 // cache(): menu e página chamam no mesmo pedido, mas a consulta roda uma vez só.
 export const equipe = cache(async () => {
+  // O painel depende de quem entrou e da hora (validade do login, "Hoje"/"Ontem"): nunca é pré-renderizado.
+  // Sem isto, o Next tenta pré-renderizar a tela com o cookie em mãos e reclama do Date.now() do Supabase.
+  await connection();
   const supabase = await clienteDoPainel();
   const { data } = await supabase.auth.getClaims();
   const id = data?.claims?.sub;
