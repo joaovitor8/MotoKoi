@@ -5,10 +5,13 @@ import { useRef, useState } from "react";
 import { TAMANHO_MAXIMO_DA_FOTO, TIPOS_DE_FOTO, urlDaFoto } from "@/lib/fotos";
 import { clienteDoNavegador } from "@/lib/supabase-navegador";
 import { fotosMudaram } from "./acoes";
+import { Selo } from "@/components/Selo";
+import { cartao } from "@/app/painel/estilos";
 
 export type Foto = { id: number; caminho: string; ordem: number };
 
-const acao = { all: "unset", cursor: "pointer", fontWeight: 600, fontSize: 12, lineHeight: "16px", color: "var(--text-brand)", textDecoration: "underline" } as const;
+// Botões com cara de link. "!": vence o all: unset, que no CSS do Tailwind vem depois.
+const acao = "[all:unset] cursor-pointer! text-[12px]! leading-4! font-semibold! text-text-brand! underline!";
 
 // O arquivo vai direto do navegador para o Storage (uma ação de servidor aceita no máximo 1 MB),
 // e depois o caminho é gravado em produto_fotos. O RLS só deixa a equipe fazer as duas coisas.
@@ -70,38 +73,28 @@ export function FotosProduto({ produtoId, nome, fotos }: { produtoId: number; no
     });
 
   return (
-    <section className="ad-card" aria-busy={ocupado} style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
+    <section className={`${cartao} p-6 flex flex-col gap-4`} aria-busy={ocupado}>
       <h2>Fotos</h2>
       {emOrdem.length > 0 && (
-        <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+        <ul className="list-none m-0 p-0 grid [grid-template-columns:repeat(3,_1fr)] gap-3">
           {emOrdem.map((foto, i) => (
-            <li key={foto.id} style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-              <div
-                style={{
-                  position: "relative",
-                  aspectRatio: "1 / 1",
-                  borderRadius: 4,
-                  background: "var(--bg-muted)",
-                  overflow: "hidden",
-                  outline: i === 0 ? "2px solid var(--text)" : undefined,
-                  outlineOffset: 2,
-                }}
-              >
-                <Image src={urlDaFoto(foto.caminho)} alt={`Foto ${i + 1} de ${nome}`} fill sizes="120px" style={{ objectFit: "contain" }} />
+            <li key={foto.id} className="flex flex-col gap-1.5 min-w-0">
+              <div className={`relative aspect-[1/1] overflow-hidden rounded-md bg-bg-muted [outline-offset:2px] ${i === 0 ? "outline-2 outline-text" : ""}`}>
+                <Image src={urlDaFoto(foto.caminho)} alt={`Foto ${i + 1} de ${nome}`} fill sizes="120px" className="object-contain" />
                 {i === 0 && (
-                  <span className="mk-badge" style={{ position: "absolute", left: 6, top: 6, background: "var(--text)", color: "var(--text-inverse)" }}>
+                  <Selo tom="escuro" className="absolute top-1.5 left-1.5">
                     Capa
-                  </span>
+                  </Selo>
                 )}
               </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "2px 10px" }}>
+              <div className="flex flex-wrap gap-y-0.5 gap-x-2.5">
                 {i > 0 && (
-                  <button type="button" disabled={ocupado} onClick={() => mover(i, -1)} aria-label={`Mover a foto ${i + 1} para antes`} style={acao}>
+                  <button type="button" disabled={ocupado} onClick={() => mover(i, -1)} aria-label={`Mover a foto ${i + 1} para antes`} className={acao}>
                     Antes
                   </button>
                 )}
                 {i < emOrdem.length - 1 && (
-                  <button type="button" disabled={ocupado} onClick={() => mover(i, 1)} aria-label={`Mover a foto ${i + 1} para depois`} style={acao}>
+                  <button type="button" disabled={ocupado} onClick={() => mover(i, 1)} aria-label={`Mover a foto ${i + 1} para depois`} className={acao}>
                     Depois
                   </button>
                 )}
@@ -110,7 +103,7 @@ export function FotosProduto({ produtoId, nome, fotos }: { produtoId: number; no
                   disabled={ocupado}
                   onClick={() => window.confirm("Remover esta foto? Não dá para desfazer.") && remover(foto)}
                   aria-label={`Remover a foto ${i + 1}`}
-                  style={acao}
+                  className={acao}
                 >
                   Remover
                 </button>
@@ -119,21 +112,9 @@ export function FotosProduto({ produtoId, nome, fotos }: { produtoId: number; no
           ))}
         </ul>
       )}
-      <label
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 4,
-          padding: "24px 16px",
-          border: "1.5px dashed var(--border-strong)",
-          borderRadius: 4,
-          textAlign: "center",
-          cursor: "pointer",
-        }}
-      >
-        <span style={{ fontWeight: 600, fontSize: 14, lineHeight: "20px" }}>{ocupado ? "Aguarde…" : "Escolha as fotos no computador"}</span>
-        <span style={{ fontSize: 13, lineHeight: "20px", color: "var(--text-muted)" }}>JPG, PNG ou WebP, até 5 MB, fundo claro</span>
+      <label className="flex cursor-pointer flex-col items-center gap-1 rounded-md border-[1.5px] border-dashed border-border-strong px-4 py-6 text-center">
+        <span className="font-semibold text-[14px] leading-5">{ocupado ? "Aguarde…" : "Escolha as fotos no computador"}</span>
+        <span className="text-[13px] leading-5 text-text-muted">JPG, PNG ou WebP, até 5 MB, fundo claro</span>
         <input
           ref={campo}
           type="file"
@@ -141,15 +122,15 @@ export function FotosProduto({ produtoId, nome, fotos }: { produtoId: number; no
           multiple
           disabled={ocupado}
           onChange={(e) => e.target.files?.length && enviar([...e.target.files])}
-          style={{ marginTop: 8, maxWidth: "100%", fontSize: 13 }}
+          className="mt-2 max-w-full text-[13px]"
         />
       </label>
       {erro && (
-        <p role="alert" style={{ margin: 0, fontWeight: 600, fontSize: 14, lineHeight: "20px", color: "var(--text-danger)" }}>
+        <p role="alert" className="m-0 font-semibold text-[14px] leading-5 text-text-danger">
           {erro}
         </p>
       )}
-      <span style={{ fontSize: 12, lineHeight: "16px", color: "var(--text-muted)" }}>
+      <span className="text-[12px] leading-4 text-text-muted">
         A primeira foto é a capa. Use “Antes” e “Depois” para mudar a ordem.
       </span>
     </section>

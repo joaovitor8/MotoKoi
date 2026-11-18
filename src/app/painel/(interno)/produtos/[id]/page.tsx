@@ -5,6 +5,7 @@ import { dataBR, equipe } from "@/lib/painel";
 import { FormularioProduto, type ProdutoDoPainel } from "../FormularioProduto";
 import { FichaProduto } from "../FichaProduto";
 import { FotosProduto, type Foto } from "../FotosProduto";
+import { cartao } from "@/app/painel/estilos";
 
 export const metadata: Metadata = { title: "Produto" };
 
@@ -64,12 +65,12 @@ export default async function EditarProduto({ params }: PageProps<"/painel/produ
 
   return (
     <>
-      <nav aria-label="Você está em" style={{ display: "flex", gap: 8, fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
-        <Link href="/painel/produtos" style={{ color: "var(--text-muted)" }}>
+      <nav aria-label="Você está em" className="flex gap-2 text-[14px] leading-5 text-text-muted">
+        <Link href="/painel/produtos" className="text-text-muted">
           Produtos
         </Link>
         <span aria-hidden="true">/</span>
-        <span style={{ color: "var(--text)" }}>{novo ? "Novo" : "Editar"}</span>
+        <span className="text-text">{novo ? "Novo" : "Editar"}</span>
       </nav>
       {/* key: ao sair de "novo" para o produto recém-criado, o formulário recomeça com os dados salvos */}
       <FormularioProduto
@@ -82,9 +83,9 @@ export default async function EditarProduto({ params }: PageProps<"/painel/produ
           produto.id ? (
             <FotosProduto produtoId={produto.id} nome={produto.nome} fotos={p.fotos as Foto[]} />
           ) : (
-            <section className="ad-card" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 8 }}>
+            <section className={`${cartao} p-6 flex flex-col gap-2`}>
               <h2>Fotos</h2>
-              <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-secondary)" }}>Salve o produto primeiro. As fotos entram depois, nesta mesma tela.</span>
+              <span className="text-[14px] leading-5 text-text-secondary">Salve o produto primeiro. As fotos entram depois, nesta mesma tela.</span>
             </section>
           )
         }

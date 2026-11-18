@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icone } from "@/components/Icone";
+import { Selo } from "@/components/Selo";
 
 const itens = [
   { href: "/painel/produtos", rotulo: "Produtos", icone: "package" },
@@ -17,15 +18,20 @@ const itens = [
 export function MenuLinks({ novos }: { novos: number }) {
   const caminho = usePathname();
   return (
-    <nav className="ad-nav" aria-label="Painel">
+    <nav className="flex flex-col gap-1" aria-label="Painel">
       {itens.map(({ href, rotulo, icone }) => (
-        <Link key={href} href={href} aria-current={caminho.startsWith(href) ? "page" : undefined}>
+        <Link
+          key={href}
+          href={href}
+          aria-current={caminho.startsWith(href) ? "page" : undefined}
+          className="flex items-center gap-3 rounded-md px-3 py-2.5 text-[15px] leading-5 font-medium text-text-inverse-muted no-underline hover:text-text-inverse aria-[current]:bg-border-inverse aria-[current]:text-text-inverse [&_.mk-ico]:text-[20px]"
+        >
           <Icone nome={icone} />
-          <span style={{ flex: 1 }}>{rotulo}</span>
+          <span className="flex-1">{rotulo}</span>
           {href === "/painel/revenda" && novos > 0 && (
-            <span className="mk-badge" style={{ background: "var(--brand)", color: "var(--text-on-brand)" }}>
+            <Selo tom="solido">
               {novos}
-            </span>
+            </Selo>
           )}
         </Link>
       ))}

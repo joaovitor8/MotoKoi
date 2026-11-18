@@ -2,10 +2,8 @@
 
 import { useActionState } from "react";
 import { salvarConfiguracoes, type EstadoConfiguracoes } from "./acoes";
-
-const rotulo = { fontWeight: 600, fontSize: 14, lineHeight: "16px" } as const;
-const dica = { fontSize: 12, lineHeight: "16px", color: "var(--text-muted)" } as const;
-const campo = { flex: "1 1 220px", minWidth: 0, display: "flex", flexDirection: "column", gap: 6 } as const;
+import { Botao } from "@/components/Botao";
+import { cartao, entrada } from "@/app/painel/estilos";
 
 export function FormularioConfiguracoes({ atuais }: { atuais: { garantia: string; prazo: string; whatsapp: string } }) {
   const [estado, enviar, salvando] = useActionState<EstadoConfiguracoes, FormData>(salvarConfiguracoes, {});
@@ -13,45 +11,45 @@ export function FormularioConfiguracoes({ atuais }: { atuais: { garantia: string
   const v = estado.valores ?? atuais;
 
   return (
-    <form action={enviar} className="ad-card" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
+    <form action={enviar} className={`${cartao} p-6 flex flex-col gap-4`}>
       <h2>Garantia padrão e contato</h2>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
-        <label style={campo}>
-          <span style={rotulo}>Garantia (meses)</span>
-          <span className="ad-in">
+      <div className="flex flex-wrap gap-4">
+        <label className="flex-[1_1_220px] min-w-0 flex flex-col gap-1.5">
+          <span className="font-semibold text-[14px] leading-4">Garantia (meses)</span>
+          <span className={entrada}>
             <input name="garantia" inputMode="numeric" maxLength={3} defaultValue={v.garantia} />
           </span>
-          <span style={dica}>Vale para toda peça sem prazo próprio. Aparece na página Garantia.</span>
+          <span className="text-[12px] leading-4 text-text-muted">Vale para toda peça sem prazo próprio. Aparece na página Garantia.</span>
         </label>
-        <label style={campo}>
-          <span style={rotulo}>Prazo de resposta (dias úteis)</span>
-          <span className="ad-in">
+        <label className="flex-[1_1_220px] min-w-0 flex flex-col gap-1.5">
+          <span className="font-semibold text-[14px] leading-4">Prazo de resposta (dias úteis)</span>
+          <span className={entrada}>
             <input name="prazo" inputMode="numeric" maxLength={2} defaultValue={v.prazo} />
           </span>
-          <span style={dica}>Aparece no passo “Resposta” da página Garantia.</span>
+          <span className="text-[12px] leading-4 text-text-muted">Aparece no passo “Resposta” da página Garantia.</span>
         </label>
-        <label style={campo}>
-          <span style={rotulo}>WhatsApp da marca</span>
-          <span className="ad-in">
+        <label className="flex-[1_1_220px] min-w-0 flex flex-col gap-1.5">
+          <span className="font-semibold text-[14px] leading-4">WhatsApp da marca</span>
+          <span className={entrada}>
             <input name="whatsapp" type="tel" maxLength={20} placeholder="(00) 00000-0000" defaultValue={v.whatsapp} />
           </span>
-          <span style={dica}>Usado nos botões de WhatsApp do site e no rodapé.</span>
+          <span className="text-[12px] leading-4 text-text-muted">Usado nos botões de WhatsApp do site e no rodapé.</span>
         </label>
       </div>
       {estado.erro && (
-        <p role="alert" style={{ margin: 0, fontWeight: 600, fontSize: 14, lineHeight: "20px", color: "var(--text-danger)" }}>
+        <p role="alert" className="m-0 font-semibold text-[14px] leading-5 text-text-danger">
           {estado.erro}
         </p>
       )}
       {estado.salvo && (
-        <p role="status" style={{ margin: 0, fontWeight: 600, fontSize: 14, lineHeight: "20px", color: "var(--text-success)" }}>
+        <p role="status" className="m-0 font-semibold text-[14px] leading-5 text-text-success">
           Alterações salvas.
         </p>
       )}
       <div>
-        <button type="submit" disabled={salvando} className="mk-btn mk-btn--primary">
+        <Botao variante="primario" type="submit" disabled={salvando}>
           {salvando ? "Salvando…" : "Salvar"}
-        </button>
+        </Botao>
       </div>
     </form>
   );

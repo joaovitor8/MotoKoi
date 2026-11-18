@@ -6,6 +6,9 @@ import { urlDaFoto } from "@/lib/fotos";
 import { dataBR, equipe } from "@/lib/painel";
 import { contem } from "@/lib/produtos";
 import { FiltrosProdutos } from "./FiltrosProdutos";
+import { Botao } from "@/components/Botao";
+import { Selo } from "@/components/Selo";
+import { cartao, miniatura, tabela, tituloPainel } from "@/app/painel/estilos";
 
 export const metadata: Metadata = { title: "Produtos" };
 
@@ -60,22 +63,22 @@ export default async function ProdutosDoPainel({ searchParams }: PageProps<"/pai
 
   return (
     <>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px 24px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <h1 className="ad-h1">Produtos</h1>
-          <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+      <div className="flex flex-wrap items-center justify-between gap-y-4 gap-x-6">
+        <div className="flex flex-col gap-1">
+          <h1 className={tituloPainel}>Produtos</h1>
+          <span className="text-[14px] leading-5 text-text-muted">
             {todos.length} produtos · {publicados} publicados · {todos.length - publicados} rascunhos
           </span>
         </div>
-        <Link className="mk-btn mk-btn--primary" href="/painel/produtos/novo">
+        <Botao variante="primario" href="/painel/produtos/novo">
           + Novo produto
-        </Link>
+        </Botao>
       </div>
 
       <FiltrosProdutos categorias={categorias.data} {...filtros} />
 
-      <div className="ad-card" style={{ overflowX: "auto" }}>
-        <table className="ad-table">
+      <div className={`${cartao} overflow-x-auto`}>
+        <table className={tabela}>
           <thead>
             <tr>
               <th>Foto</th>
@@ -86,7 +89,7 @@ export default async function ProdutosDoPainel({ searchParams }: PageProps<"/pai
               <th>Status</th>
               <th>Atualizado</th>
               <th>
-                <span style={{ position: "absolute", left: -9999 }}>Ações</span>
+                <span className="absolute -left-[9999px]">Ações</span>
               </th>
             </tr>
           </thead>
@@ -97,30 +100,30 @@ export default async function ProdutosDoPainel({ searchParams }: PageProps<"/pai
               return (
                 <tr key={p.id}>
                   <td>
-                    <span className="ad-thumb" style={{ position: "relative", overflow: "hidden" }}>
-                      {capa ? <Image src={urlDaFoto(capa.caminho)} alt="" fill sizes="48px" style={{ objectFit: "contain" }} /> : <Icone nome="package" />}
+                    <span className={`${miniatura} relative overflow-hidden`}>
+                      {capa ? <Image src={urlDaFoto(capa.caminho)} alt="" fill sizes="48px" className="object-contain" /> : <Icone nome="package" />}
                     </span>
                   </td>
                   <td>
-                    <Link href={`/painel/produtos/${p.id}`} style={{ fontWeight: 600, color: "var(--text)", textDecoration: "none" }}>
+                    <Link href={`/painel/produtos/${p.id}`} className="font-semibold text-text no-underline">
                       {p.nome}
                     </Link>
                   </td>
-                  <td style={{ color: "var(--text-secondary)", whiteSpace: "nowrap" }}>{p.codigo ?? "—"}</td>
+                  <td className="text-text-secondary whitespace-nowrap">{p.codigo ?? "—"}</td>
                   <td>{p.categoria.nome}</td>
-                  <td style={{ color: "var(--text-secondary)" }}>
+                  <td className="text-text-secondary">
                     {motos.length ? `${motos[0]}${motos.length > 1 ? ` +${motos.length - 1}` : ""}` : "Uso geral"}
                   </td>
                   <td>
                     {p.status === "publicado" ? (
-                      <span className="mk-badge mk-badge--success">Publicado</span>
+                      <Selo tom="sucesso">Publicado</Selo>
                     ) : (
-                      <span className="mk-badge mk-badge--warning">Rascunho</span>
+                      <Selo tom="aviso">Rascunho</Selo>
                     )}
                   </td>
-                  <td style={{ color: "var(--text-secondary)", whiteSpace: "nowrap" }}>{dataBR(p.atualizado_em)}</td>
-                  <td style={{ textAlign: "right" }}>
-                    <Link href={`/painel/produtos/${p.id}`} style={{ fontWeight: 600 }}>
+                  <td className="text-text-secondary whitespace-nowrap">{dataBR(p.atualizado_em)}</td>
+                  <td className="text-right">
+                    <Link href={`/painel/produtos/${p.id}`} className="font-semibold">
                       Editar
                     </Link>
                   </td>
@@ -129,7 +132,7 @@ export default async function ProdutosDoPainel({ searchParams }: PageProps<"/pai
             })}
             {naPagina.length === 0 && (
               <tr>
-                <td colSpan={8} style={{ color: "var(--text-secondary)" }}>
+                <td colSpan={8} className="text-text-secondary">
                   Nenhum produto encontrado com esses filtros.
                 </td>
               </tr>
@@ -138,28 +141,28 @@ export default async function ProdutosDoPainel({ searchParams }: PageProps<"/pai
         </table>
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className="text-[14px] leading-5 text-text-muted">
           {filtrados.length ? `Mostrando ${inicio + 1} a ${inicio + naPagina.length} de ${filtrados.length}` : "Nada para mostrar"}
         </span>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div className="flex gap-2">
           {pagina > 1 ? (
-            <Link className="mk-btn mk-btn--secondary" href={endereco(pagina - 1)}>
+            <Botao variante="secundario" href={endereco(pagina - 1)}>
               Anterior
-            </Link>
+            </Botao>
           ) : (
-            <a className="mk-btn mk-btn--secondary" aria-disabled="true" style={{ opacity: 0.45 }}>
+            <Botao variante="secundario" apagado>
               Anterior
-            </a>
+            </Botao>
           )}
           {pagina < paginas ? (
-            <Link className="mk-btn mk-btn--secondary" href={endereco(pagina + 1)}>
+            <Botao variante="secundario" href={endereco(pagina + 1)}>
               Próxima
-            </Link>
+            </Botao>
           ) : (
-            <a className="mk-btn mk-btn--secondary" aria-disabled="true" style={{ opacity: 0.45 }}>
+            <Botao variante="secundario" apagado>
               Próxima
-            </a>
+            </Botao>
           )}
         </div>
       </div>

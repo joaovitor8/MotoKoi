@@ -6,6 +6,8 @@ import { Icone } from "@/components/Icone";
 import { Ondas } from "@/components/Ondas";
 import { obterConteudo } from "@/lib/conteudo";
 import { FormularioRevenda } from "./FormularioRevenda";
+import { Botao } from "@/components/Botao";
+import { rotulo, tituloH1, tituloH2 } from "@/components/estilos";
 
 export const metadata: Metadata = { title: "Seja revendedor" };
 
@@ -45,51 +47,35 @@ export default async function SejaRevendedor() {
     <>
       <Cabecalho atual="/seja-revendedor" />
       <main>
-        <section
-          style={{
-            position: "relative",
-            overflow: "hidden",
-            background: "var(--brand)",
-            color: "var(--text-on-brand)",
-            padding: "88px var(--margem) 96px",
-          }}
-        >
+        <section className="relative overflow-hidden bg-brand text-text-on-brand px-(--margem) pt-22 pb-24">
           <Ondas />
-          <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: 56 }}>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: "32px 64px" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 820 }}>
-                <span className="st-rotulo" style={{ color: "inherit" }}>
+          <div className="relative flex flex-col gap-14">
+            <div className="flex flex-wrap items-end justify-between gap-y-8 gap-x-16">
+              <div className="flex flex-col gap-5 max-w-205">
+                <span className={`${rotulo} text-inherit!`}>
                   Para lojas e oficinas
                 </span>
-                <h1 className="st-h1">
+                <h1 className={tituloH1}>
                   Suba o rio
                   <br />
                   com a gente
                 </h1>
-                <p style={{ margin: 0, fontSize: 20, lineHeight: "32px", maxWidth: 600 }}>
+                <p className="m-0 text-[20px] leading-8 max-w-150">
                   Revenda uma linha com marca própria: preço de atacado, pedido mínimo acessível e suporte para reposição.
                 </p>
               </div>
-              <a className="mk-btn mk-btn--dark mk-btn--lg" href="#cadastro">
+              <Botao variante="escuro" grande href="#cadastro">
                 Fazer o cadastro <Icone nome="arrow-right" />
-              </a>
+              </Botao>
             </div>
-            <dl style={{ margin: 0, display: "flex", flexWrap: "wrap", gap: 40 }}>
+            <dl className="m-0 flex flex-wrap gap-10">
               {numeros.map((n) => (
                 <div
                   key={n.numero}
-                  style={{
-                    flex: "1 1 200px",
-                    display: "flex",
-                    flexDirection: "column-reverse", // no HTML vem o rótulo (dt) e depois o número (dd); na tela, o número fica em cima
-                    justifyContent: "flex-end",
-                    gap: 8,
-                    paddingTop: 20,
-                    borderTop: "1.5px solid var(--text-on-brand)",
-                  }}
+                  className="flex-[1_1_200px] flex flex-col-reverse justify-end gap-2 pt-5 border-t-[1.5px] border-t-text-on-brand"
                 >
-                  <dt style={{ fontSize: 16, lineHeight: "24px" }}>{n.texto}</dt>
-                  <dd style={{ margin: 0, fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(56px, 6vw, 88px)", lineHeight: 0.9 }}>
+                  <dt className="text-[16px] leading-6">{n.texto}</dt>
+                  <dd className="m-0 font-display font-extrabold [font-size:clamp(56px,_6vw,_88px)] leading-[0.9]">
                     {n.numero}
                   </dd>
                 </div>
@@ -98,32 +84,24 @@ export default async function SejaRevendedor() {
           </div>
         </section>
 
-        <section style={{ padding: "112px var(--margem) 0", display: "flex", flexDirection: "column", gap: 48 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <span className="st-rotulo">Como funciona</span>
-            <h2 className="st-h2">Três passos</h2>
+        <section className="px-(--margem) pt-28 pb-0 flex flex-col gap-12">
+          <div className="flex flex-col gap-4">
+            <span className={rotulo}>Como funciona</span>
+            <h2 className={tituloH2}>Três passos</h2>
           </div>
-          <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexWrap: "wrap", gap: 40 }}>
+          <ol className="list-none m-0 p-0 flex flex-wrap gap-10">
             {passos.map((p, i) => (
               <li
                 key={p.titulo}
-                style={{
-                  flex: "1 1 260px",
-                  minWidth: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 12,
-                  paddingTop: 24,
-                  borderTop: "1.5px solid var(--text)",
-                }}
+                className="flex-[1_1_260px] min-w-0 flex flex-col gap-3 pt-6 border-t-[1.5px] border-t-text"
               >
-                <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 64, lineHeight: 0.9, color: "var(--brand)" }}>
+                <span className="font-display font-extrabold text-[64px] leading-[0.9] text-brand">
                   {i + 1}
                 </span>
-                <h3 style={{ margin: 0, fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 32, lineHeight: "34px", textTransform: "uppercase" }}>
+                <h3 className="m-0 font-display font-bold text-[32px] leading-[34px] uppercase">
                   {p.titulo}
                 </h3>
-                <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)" }}>{p.texto}</p>
+                <p className="m-0 text-[17px] leading-7 text-text-secondary">{p.texto}</p>
               </li>
             ))}
           </ol>
@@ -131,31 +109,31 @@ export default async function SejaRevendedor() {
 
         <section
           id="cadastro"
-          style={{ padding: "112px var(--margem)", display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: "56px 72px" }}
+          className="py-28 px-(--margem) flex flex-wrap items-start gap-y-14 gap-x-18"
         >
-          <div style={{ flex: "1 1 360px", minWidth: 0, display: "flex", flexDirection: "column", gap: 24 }}>
-            <span className="st-rotulo">Cadastro</span>
-            <h2 className="st-h2">
+          <div className="flex-[1_1_360px] min-w-0 flex flex-col gap-6">
+            <span className={rotulo}>Cadastro</span>
+            <h2 className={tituloH2}>
               Quero
               <br />
               revender
             </h2>
-            <ul style={{ listStyle: "none", margin: 0, padding: 0, borderTop: "1.5px solid var(--text)" }}>
+            <ul className="list-none m-0 p-0 border-t-[1.5px] border-t-text">
               {vantagens.map((v) => (
-                <li key={v.titulo} style={{ display: "flex", gap: 16, padding: "18px 0", borderBottom: "1px solid var(--border)" }}>
-                  <span style={{ fontSize: 24, color: "var(--brand)", paddingTop: 2 }}>
+                <li key={v.titulo} className="flex gap-4 py-4.5 px-0 border-b border-b-border">
+                  <span className="text-[24px] text-brand pt-0.5">
                     <Icone nome="check" />
                   </span>
-                  <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <b style={{ fontWeight: 600, fontSize: 17, lineHeight: "26px" }}>{v.titulo}</b>
-                    <span style={{ fontSize: 15, lineHeight: "24px", color: "var(--text-secondary)" }}>{v.texto}</span>
+                  <span className="flex flex-col gap-0.5">
+                    <b className="font-semibold text-[17px] leading-[26px]">{v.titulo}</b>
+                    <span className="text-[15px] leading-6 text-text-secondary">{v.texto}</span>
                   </span>
                 </li>
               ))}
             </ul>
-            <p style={{ margin: 0, fontSize: 15, lineHeight: "24px", color: "var(--text-secondary)" }}>
+            <p className="m-0 text-[15px] leading-6 text-text-secondary">
               Prefere conversar?{" "}
-              <LinkWhatsApp whatsapp={conteudo.whatsapp} style={{ fontWeight: 600 }}>
+              <LinkWhatsApp whatsapp={conteudo.whatsapp} className="font-semibold">
                 Chame no WhatsApp {conteudo.whatsapp?.numero ?? "[NÚMERO]"}
               </LinkWhatsApp>
             </p>
@@ -166,25 +144,25 @@ export default async function SejaRevendedor() {
 
         {/* Depoimentos e materiais só aparecem quando há algo publicado no painel (Conteúdo do site). */}
         {conteudo.depoimentos.length > 0 && (
-          <section style={{ padding: "0 var(--margem) 112px", display: "flex", flexDirection: "column", gap: 40 }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <span className="st-rotulo">Quem já revende</span>
-              <h2 className="st-h2">
+          <section className="px-(--margem) pt-0 pb-28 flex flex-col gap-10">
+            <div className="flex flex-col gap-4">
+              <span className={rotulo}>Quem já revende</span>
+              <h2 className={tituloH2}>
                 O que dizem
                 <br />
                 os lojistas
               </h2>
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 24 }}>
+            <div className="flex flex-wrap gap-6">
               {conteudo.depoimentos.map((d) => (
-                <figure key={d.nome + d.loja} style={{ flex: "1 1 300px", minWidth: 0, margin: 0, display: "flex", flexDirection: "column", gap: 20, padding: 28, border: "1.5px solid var(--text)", borderRadius: 8 }}>
-                  <span aria-hidden="true" style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 64, lineHeight: 0.6, color: "var(--brand)" }}>
+                <figure key={d.nome + d.loja} className="flex-[1_1_300px] min-w-0 m-0 flex flex-col gap-5 p-7 border-[1.5px] border-text rounded-lg">
+                  <span aria-hidden="true" className="font-display font-extrabold text-[64px] leading-[0.6] text-brand">
                     “
                   </span>
-                  <blockquote style={{ margin: 0, fontSize: 18, lineHeight: "28px" }}>{d.texto}</blockquote>
-                  <figcaption style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <b style={{ fontWeight: 600, fontSize: 15, lineHeight: "22px" }}>{d.nome}</b>
-                    <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+                  <blockquote className="m-0 text-[18px] leading-7">{d.texto}</blockquote>
+                  <figcaption className="flex flex-col gap-0.5">
+                    <b className="font-semibold text-[15px] leading-[22px]">{d.nome}</b>
+                    <span className="text-[14px] leading-5 text-text-muted">
                       {d.loja} · {d.cidade}, {d.uf}
                     </span>
                   </figcaption>
@@ -195,32 +173,32 @@ export default async function SejaRevendedor() {
         )}
 
         {conteudo.materiais.length > 0 && (
-          <section id="materiais" style={{ background: "var(--bg-subtle)", padding: "112px var(--margem)", display: "flex", flexWrap: "wrap", gap: "40px 72px" }}>
-            <div style={{ flex: "1 1 340px", minWidth: 0, display: "flex", flexDirection: "column", gap: 16 }}>
-              <span className="st-rotulo">Materiais para o lojista</span>
-              <h2 className="st-h2">
+          <section id="materiais" className="bg-bg-subtle py-28 px-(--margem) flex flex-wrap gap-y-10 gap-x-18">
+            <div className="flex-[1_1_340px] min-w-0 flex flex-col gap-4">
+              <span className={rotulo}>Materiais para o lojista</span>
+              <h2 className={tituloH2}>
                 Pronto para
                 <br />
                 vender
               </h2>
-              <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)", maxWidth: 420 }}>
+              <p className="m-0 text-[17px] leading-7 text-text-secondary max-w-105">
                 Fotos, fichas e catálogo para usar no balcão, no WhatsApp e na sua loja online.
               </p>
             </div>
-            <ul style={{ flex: "2 1 560px", minWidth: 0, listStyle: "none", margin: 0, padding: 0, borderTop: "1.5px solid var(--text)" }}>
+            <ul className="flex-[2_1_560px] min-w-0 list-none m-0 p-0 border-t-[1.5px] border-t-text">
               {conteudo.materiais.map((m) => (
-                <li key={m.url} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 24px", padding: "20px 0", borderBottom: "1px solid var(--border)" }}>
-                  <span style={{ fontSize: 26, color: "var(--brand)" }}>
+                <li key={m.url} className="flex flex-wrap items-center gap-y-2 gap-x-6 py-5 px-0 border-b border-b-border">
+                  <span className="text-[26px] text-brand">
                     <Icone nome="download" />
                   </span>
-                  <span style={{ flex: "1 1 260px", display: "flex", flexDirection: "column", gap: 2 }}>
-                    <b style={{ fontWeight: 600, fontSize: 17, lineHeight: "26px" }}>{m.titulo}</b>
-                    {m.descricao && <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-secondary)" }}>{m.descricao}</span>}
+                  <span className="flex-[1_1_260px] flex flex-col gap-0.5">
+                    <b className="font-semibold text-[17px] leading-[26px]">{m.titulo}</b>
+                    {m.descricao && <span className="text-[14px] leading-5 text-text-secondary">{m.descricao}</span>}
                   </span>
-                  <span style={{ fontWeight: 500, fontSize: 13, lineHeight: "20px", color: "var(--text-muted)" }}>{m.formato}</span>
-                  <a className="mk-btn mk-btn--secondary" href={m.url} aria-label={`Baixar ${m.titulo}`}>
+                  <span className="font-medium text-[13px] leading-5 text-text-muted">{m.formato}</span>
+                  <Botao variante="secundario" href={m.url} aria-label={`Baixar ${m.titulo}`}>
                     Baixar
-                  </a>
+                  </Botao>
                 </li>
               ))}
             </ul>
@@ -228,13 +206,13 @@ export default async function SejaRevendedor() {
         )}
 
         {/* Depois da faixa cinza dos materiais, a seção precisa de respiro em cima; sem ela, o respiro já vem da seção anterior. */}
-        <section style={{ padding: conteudo.materiais.length > 0 ? "112px var(--margem)" : "0 var(--margem) 112px", display: "flex", flexDirection: "column", gap: 32 }}>
-          <h2 className="st-h2">Dúvidas</h2>
-          <div style={{ borderTop: "1.5px solid var(--text)" }}>
+        <section className={`flex flex-col gap-8 px-(--margem) ${conteudo.materiais.length > 0 ? "py-28" : "pt-0 pb-28"}`}>
+          <h2 className={tituloH2}>Dúvidas</h2>
+          <div className="border-t-[1.5px] border-t-text">
             {duvidas.map((d) => (
-              <details key={d.pergunta} style={{ borderBottom: "1px solid var(--border)", padding: "20px 0" }}>
-                <summary style={{ cursor: "pointer", fontWeight: 600, fontSize: 18, lineHeight: "28px" }}>{d.pergunta}</summary>
-                <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)", paddingTop: 8, maxWidth: 760 }}>
+              <details key={d.pergunta} className="border-b border-b-border py-5 px-0">
+                <summary className="cursor-pointer font-semibold text-[18px] leading-7">{d.pergunta}</summary>
+                <p className="m-0 text-[17px] leading-7 text-text-secondary pt-2 max-w-190">
                   {d.resposta}
                   {"garantia" in d && (
                     <>

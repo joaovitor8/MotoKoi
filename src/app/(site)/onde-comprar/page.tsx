@@ -7,6 +7,10 @@ import { SeletorQueEnvia } from "@/components/SeletorQueEnvia";
 import { linkWhatsApp, obterConteudo } from "@/lib/conteudo";
 import { contem } from "@/lib/filtro";
 import { listarPontosDeVenda } from "@/lib/produtos";
+import { Botao, classesBotao } from "@/components/Botao";
+import { LinkWhatsApp } from "@/components/LinkWhatsApp";
+import { Campo, classesCampo, classesControle, classesRotulo } from "@/components/Campo";
+import { rotulo, tituloH1 } from "@/components/estilos";
 
 export const metadata: Metadata = { title: "Onde comprar" };
 
@@ -65,27 +69,18 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/onde-comprar">, "sear
 
   return (
     <>
-      <section
-        style={{
-          padding: "64px var(--margem) 48px",
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "flex-end",
-          justifyContent: "space-between",
-          gap: "32px 64px",
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <span className="st-rotulo">Onde comprar</span>
-          <h1 className="st-h1">
+      <section className="px-(--margem) pt-16 pb-12 flex flex-wrap items-end justify-between gap-y-8 gap-x-16">
+        <div className="flex flex-col gap-4">
+          <span className={rotulo}>Onde comprar</span>
+          <h1 className={tituloH1}>
             Perto
             <br />
             de você
           </h1>
         </div>
-        <div style={{ flex: "1 1 520px", maxWidth: 680, display: "flex", flexWrap: "wrap", gap: 12 }}>
-          <div className="mk-field" style={{ width: "auto", flex: "1 1 180px", minWidth: 0 }}>
-            <span className="mk-field__label" aria-hidden="true">
+        <div className="flex-[1_1_520px] max-w-170 flex flex-wrap gap-3">
+          <div className={`${classesCampo} min-w-0 flex-[1_1_180px]`}>
+            <span className={classesRotulo} aria-hidden="true">
               Estado
             </span>
             <SeletorQueEnvia
@@ -95,41 +90,29 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/onde-comprar">, "sear
               valor={uf ?? ""}
               opcoes={[{ valor: "", texto: "Todos os estados" }, ...estados.map((e) => ({ valor: e, texto: ESTADOS[e] ?? e }))]}
               ocultos={[...(local ? [["local", local] as [string, string]] : []), ...(tipo ? [["tipo", tipo] as [string, string]] : [])]}
-              className="mk-field__control"
-              style={{ justifyContent: "space-between" }}
+              className={`${classesControle} justify-between`}
             />
           </div>
-          <form action="/onde-comprar" role="search" style={{ flex: "2 1 260px", minWidth: 0, display: "flex" }}>
+          <form action="/onde-comprar" role="search" className="flex-[2_1_260px] min-w-0 flex">
             {uf && <input type="hidden" name="uf" value={uf} />}
             {tipo && <input type="hidden" name="tipo" value={tipo} />}
-            <label className="mk-field" style={{ width: "auto", flex: 1, minWidth: 0 }}>
-              <span className="mk-field__label">Cidade ou CEP</span>
-              <span className="mk-field__control">
-                <input name="local" type="text" defaultValue={local} placeholder="Ex.: Araçatuba" style={{ minWidth: 0 }} />
+            <Campo rotulo="Cidade ou CEP" className="min-w-0 flex-1">
+              <span className={classesControle}>
+                <input name="local" type="text" defaultValue={local} placeholder="Ex.: Araçatuba" className="min-w-0" />
               </span>
-            </label>
+            </Campo>
           </form>
         </div>
       </section>
 
-      <section style={{ padding: "0 var(--margem) 96px", display: "flex", flexWrap: "wrap", alignItems: "stretch", gap: "32px 48px" }}>
-        <div style={{ flex: "1 1 380px", minWidth: 0, display: "flex", flexDirection: "column", gap: 16 }}>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 12,
-              paddingBottom: 16,
-              borderBottom: "1.5px solid var(--text)",
-            }}
-          >
-            <span style={{ fontWeight: 600, fontSize: 16, lineHeight: "24px" }}>
+      <section className="px-(--margem) pt-0 pb-24 flex flex-wrap items-stretch gap-y-8 gap-x-12">
+        <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b-[1.5px] border-b-text">
+            <span className="font-semibold text-[16px] leading-6">
               {pontos.length} {pontos.length === 1 ? "ponto de venda" : "pontos de venda"}
               {uf ? ` em ${uf}` : ""}
             </span>
-            <nav aria-label="Tipo de ponto de venda" style={{ display: "flex", gap: 6 }}>
+            <nav aria-label="Tipo de ponto de venda" className="flex gap-1.5">
               {ABAS.map((aba) => {
                 const atual = aba.tipo === tipo;
                 return (
@@ -137,15 +120,7 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/onde-comprar">, "sear
                     key={aba.nome}
                     href={endereco(aba.tipo)}
                     aria-current={atual ? "true" : undefined}
-                    style={{
-                      font: "600 14px/20px var(--font-sans)",
-                      padding: "6px 12px",
-                      borderRadius: 999,
-                      textDecoration: "none",
-                      border: `1.5px solid ${atual ? "var(--text)" : "var(--border-strong)"}`,
-                      background: atual ? "var(--text)" : "var(--bg)",
-                      color: atual ? "var(--text-inverse)" : "var(--text)",
-                    }}
+                    className={`rounded-[999px] border-[1.5px] px-3 py-1.5 [font:600_14px/20px_var(--font-sans)] no-underline ${atual ? "border-text bg-text text-text-inverse" : "border-border-strong bg-bg text-text"}`}
                   >
                     {aba.nome}
                   </Link>
@@ -154,87 +129,64 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/onde-comprar">, "sear
             </nav>
           </div>
           {pontos.map((p, i) => (
-            <article key={p.id} className="mk-store" style={{ width: "auto", border: i === 0 ? "1.5px solid var(--text)" : undefined }}>
-              <span className="mk-store__type">{TIPOS[p.tipo]}</span>
-              <h2 className="mk-store__name" style={{ textTransform: "uppercase", fontWeight: 700 }}>
+            <article
+              key={p.id}
+              className={`box-border flex flex-col gap-3 rounded-lg bg-bg p-6 font-sans ${i === 0 ? "border-[1.5px] border-solid border-text" : "border border-border"}`}
+            >
+              <span className="text-[12px] leading-4 font-semibold tracking-[0.08em] text-text-muted uppercase">{TIPOS[p.tipo]}</span>
+              <h2 className="m-0 font-display text-[24px] leading-7 font-bold text-text uppercase">
                 {p.nome}
               </h2>
-              <span className="mk-store__addr">
+              <span className="flex gap-2 text-[14px] leading-5 text-text-secondary [&_.mk-ico]:text-[20px] [&_.mk-ico]:text-brand">
                 <Icone nome="map-pin" />
                 <span>
                   {p.endereco} · {p.cidade}, {p.uf}
                 </span>
               </span>
-              <span className="mk-store__hours">{p.horario ?? "[HORÁRIO DE FUNCIONAMENTO]"}</span>
-              <div className="mk-store__actions">
-                <a className="mk-btn mk-btn--secondary" href={mapa(`${p.endereco}, ${p.cidade}, ${p.uf}`)}>
+              <span className="text-[12px] leading-4 font-medium text-text-muted">{p.horario ?? "[HORÁRIO DE FUNCIONAMENTO]"}</span>
+              <div className="flex gap-2 pt-1 *:flex-1">
+                <Botao variante="secundario" href={mapa(`${p.endereco}, ${p.cidade}, ${p.uf}`)}>
                   Como chegar
-                </a>
+                </Botao>
                 {p.whatsapp && (
-                  <a className="mk-btn mk-btn--ghost" href={linkWhatsApp(p.whatsapp)}>
+                  <Botao variante="fantasma" href={linkWhatsApp(p.whatsapp)}>
                     WhatsApp
-                  </a>
+                  </Botao>
                 )}
               </div>
             </article>
           ))}
           {pontos.length === 0 && (
-            <p style={{ margin: 0, fontSize: 16, lineHeight: "24px", color: "var(--text-secondary)" }}>
+            <p className="m-0 text-[16px] leading-6 text-text-secondary">
               Nenhum ponto de venda com esses filtros. <Link href="/onde-comprar">Ver todos</Link>
             </p>
           )}
         </div>
-        <div
-          style={{
-            flex: "2 1 560px",
-            minWidth: 0,
-            minHeight: 560,
-            background: "var(--bg-subtle)",
-            borderRadius: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            color: "var(--text-muted)",
-            textAlign: "center",
-            padding: 24,
-            boxSizing: "border-box",
-          }}
-        >
-          <span style={{ fontSize: 64, color: "var(--brand)" }}>
+        <div className="flex-[2_1_560px] min-w-0 min-h-140 bg-bg-subtle rounded-lg flex flex-col items-center justify-center gap-2 text-text-muted text-center p-6 box-border">
+          <span className="text-[64px] text-brand">
             <Icone nome="map-pin" />
           </span>
-          <span style={{ fontSize: 13, lineHeight: "18px", fontWeight: 500 }}>[MAPA com os pontos de venda]</span>
+          <span className="text-[13px] leading-[18px] font-medium">[MAPA com os pontos de venda]</span>
         </div>
       </section>
 
       {/* A faixa vermelha "Peça pelo site da Mac Atacado" das telas de referência saiu por decisão do João (12/11/2026). */}
-      <section
-        style={{
-          padding: "96px var(--margem)",
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "24px 64px",
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 640 }}>
-          <h2 style={{ margin: 0, fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 32, lineHeight: "34px", textTransform: "uppercase" }}>
+      <section className="py-24 px-(--margem) flex flex-wrap items-center justify-between gap-y-6 gap-x-16">
+        <div className="flex flex-col gap-3 max-w-160">
+          <h2 className="m-0 font-display font-bold text-[32px] leading-[34px] uppercase">
             Não achou um ponto perto?
           </h2>
-          <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)" }}>
+          <p className="m-0 text-[17px] leading-7 text-text-secondary">
             Fale com a gente. Indicamos a loja mais próxima ou mostramos como comprar online.
           </p>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-          <a className="mk-btn mk-btn--secondary mk-btn--lg" href={conteudo.whatsapp?.link ?? "#"}>
+        <div className="flex flex-wrap gap-3">
+          <LinkWhatsApp whatsapp={conteudo.whatsapp} className={classesBotao({ variante: "secundario", grande: true })}>
             <Icone nome="message" /> WhatsApp {conteudo.whatsapp?.numero ?? "[NÚMERO]"}
-          </a>
-          <Link className="mk-btn mk-btn--ghost mk-btn--lg" href="/seja-revendedor">
+          </LinkWhatsApp>
+          <Botao variante="fantasma" grande href="/seja-revendedor">
             Tem loja? Seja revendedor
-          </Link>
+          </Botao>
         </div>
       </section>
     </>

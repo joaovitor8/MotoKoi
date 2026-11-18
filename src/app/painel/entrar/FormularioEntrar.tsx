@@ -4,37 +4,38 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { Icone } from "@/components/Icone";
 import { entrar, type EstadoLogin } from "../acoes";
+import { Botao } from "@/components/Botao";
+import { Campo, classesControle } from "@/components/Campo";
+import { tituloPainel } from "@/app/painel/estilos";
 
 export function FormularioEntrar() {
   const [estado, enviar, entrando] = useActionState<EstadoLogin, FormData>(entrar, {});
 
   return (
-    <form action={enviar} style={{ width: "100%", maxWidth: 400, display: "flex", flexDirection: "column", gap: 24 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        <h1 className="ad-h1">Entrar</h1>
-        <p style={{ margin: 0, fontSize: 16, lineHeight: "24px", color: "var(--text-secondary)" }}>Acesso só para a equipe MotoKoi.</p>
+    <form action={enviar} className="w-full max-w-100 flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <h1 className={tituloPainel}>Entrar</h1>
+        <p className="m-0 text-[16px] leading-6 text-text-secondary">Acesso só para a equipe MotoKoi.</p>
       </div>
-      <label className="mk-field" style={{ width: "auto", flex: "0 0 auto", minWidth: 0 }}>
-        <span className="mk-field__label">E-mail</span>
-        <span className="mk-field__control">
-          <input name="email" type="email" required autoComplete="username" defaultValue={estado.email} placeholder="voce@motokoi.com.br" style={{ minWidth: 0 }} />
+      <Campo rotulo="E-mail" className="min-w-0 flex-[0_0_auto]">
+        <span className={classesControle}>
+          <input name="email" type="email" required autoComplete="username" defaultValue={estado.email} placeholder="voce@motokoi.com.br" className="min-w-0" />
         </span>
-      </label>
-      <label className="mk-field" style={{ width: "auto", flex: "0 0 auto", minWidth: 0 }}>
-        <span className="mk-field__label">Senha</span>
-        <span className="mk-field__control">
-          <input name="senha" type="password" required autoComplete="current-password" placeholder="Sua senha" style={{ minWidth: 0 }} />
+      </Campo>
+      <Campo rotulo="Senha" className="min-w-0 flex-[0_0_auto]">
+        <span className={classesControle}>
+          <input name="senha" type="password" required autoComplete="current-password" placeholder="Sua senha" className="min-w-0" />
         </span>
-      </label>
+      </Campo>
       {estado.erro && (
-        <p role="alert" style={{ margin: 0, fontWeight: 600, fontSize: 15, lineHeight: "24px", color: "var(--text-danger)" }}>
+        <p role="alert" className="m-0 font-semibold text-[15px] leading-6 text-text-danger">
           {estado.erro}
         </p>
       )}
-      <button type="submit" disabled={entrando} className="mk-btn mk-btn--dark mk-btn--lg mk-btn--block" style={entrando ? { opacity: 0.6 } : undefined}>
+      <Botao variante="escuro" grande bloco type="submit" disabled={entrando} className={entrando ? "opacity-60" : undefined}>
         {entrando ? "Entrando…" : "Entrar"} <Icone nome="arrow-right" />
-      </button>
-      <Link href="/" style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)", textAlign: "center" }}>
+      </Botao>
+      <Link href="/" className="text-[14px] leading-5 text-text-muted text-center">
         Voltar para o site
       </Link>
     </form>

@@ -5,14 +5,17 @@ import { equipe, quando } from "@/lib/painel";
 import { TIPOS_NEGOCIO } from "@/lib/revenda";
 import { mudarSituacao, salvarAnotacoes } from "./acoes";
 import { ExcluirCadastro } from "./ExcluirCadastro";
+import { Botao } from "@/components/Botao";
+import { Selo } from "@/components/Selo";
+import { cartao, rotuloPainel, tabela, tituloPainel } from "@/app/painel/estilos";
 
 export const metadata: Metadata = { title: "Pedidos de revenda" };
 
 const SITUACOES = {
-  novo: { nome: "Novo", plural: "Novos", selo: "mk-badge mk-badge--brand" },
-  em_contato: { nome: "Em contato", plural: "Em contato", selo: "mk-badge mk-badge--warning" },
-  aprovado: { nome: "Aprovado", plural: "Aprovados", selo: "mk-badge mk-badge--success" },
-  recusado: { nome: "Recusado", plural: "Recusados", selo: "mk-badge" },
+  novo: { nome: "Novo", plural: "Novos", tom: "marca" },
+  em_contato: { nome: "Em contato", plural: "Em contato", tom: "aviso" },
+  aprovado: { nome: "Aprovado", plural: "Aprovados", tom: "sucesso" },
+  recusado: { nome: "Recusado", plural: "Recusados", tom: "neutro" },
 } as const;
 type Situacao = keyof typeof SITUACOES;
 
@@ -58,27 +61,27 @@ export default async function PedidosDeRevenda({ searchParams }: PageProps<"/pai
 
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <h1 className="ad-h1">Pedidos de revenda</h1>
-        <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+      <div className="flex flex-col gap-1">
+        <h1 className={tituloPainel}>Pedidos de revenda</h1>
+        <span className="text-[14px] leading-5 text-text-muted">
           Cadastros enviados pelo formulário “Seja revendedor”. Responda em até 48 horas.
         </span>
       </div>
 
-      <nav className="ad-tabs" aria-label="Situação">
-        <Link href={endereco()} aria-current={filtro ? undefined : "page"}>
+      <nav className="flex flex-wrap gap-x-7 gap-y-1 border-b border-border" aria-label="Situação">
+        <Link href={endereco()} aria-current={filtro ? undefined : "page"} className="-mb-px border-b-2 border-transparent py-3 text-[15px] leading-5 font-semibold text-text-muted no-underline aria-[current]:border-brand aria-[current]:text-text">
           Todos
         </Link>
         {(Object.keys(SITUACOES) as Situacao[]).map((s) => (
-          <Link key={s} href={endereco(s)} aria-current={filtro === s ? "page" : undefined}>
+          <Link key={s} href={endereco(s)} aria-current={filtro === s ? "page" : undefined} className="-mb-px border-b-2 border-transparent py-3 text-[15px] leading-5 font-semibold text-text-muted no-underline aria-[current]:border-brand aria-[current]:text-text">
             {SITUACOES[s].plural} ({todos.filter((c) => c.situacao === s).length})
           </Link>
         ))}
       </nav>
 
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: 24 }}>
-        <div className="ad-card" style={{ flex: "2 1 520px", minWidth: 0, overflowX: "auto" }}>
-          <table className="ad-table">
+      <div className="flex flex-wrap items-start gap-6">
+        <div className={`${cartao} flex-[2_1_520px] min-w-0 overflow-x-auto`}>
+          <table className={tabela}>
             <thead>
               <tr>
                 <th>Loja</th>
@@ -92,23 +95,23 @@ export default async function PedidosDeRevenda({ searchParams }: PageProps<"/pai
               {lista.map((c) => (
                 <tr key={c.id} aria-selected={c.id === aberto?.id}>
                   <td>
-                    <Link href={endereco(filtro, c.id)} style={{ fontWeight: 600, color: "var(--text)", textDecoration: "none" }}>
+                    <Link href={endereco(filtro, c.id)} className="font-semibold text-text no-underline">
                       {c.nome_loja}
                     </Link>
                   </td>
-                  <td style={{ color: "var(--text-secondary)", whiteSpace: "nowrap" }}>{TIPOS_NEGOCIO[c.tipo_negocio]}</td>
-                  <td style={{ color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
+                  <td className="text-text-secondary whitespace-nowrap">{TIPOS_NEGOCIO[c.tipo_negocio]}</td>
+                  <td className="text-text-secondary whitespace-nowrap">
                     {c.cidade}, {c.uf}
                   </td>
-                  <td style={{ color: "var(--text-secondary)", whiteSpace: "nowrap" }}>{quando(c.criado_em)}</td>
+                  <td className="text-text-secondary whitespace-nowrap">{quando(c.criado_em)}</td>
                   <td>
-                    <span className={SITUACOES[c.situacao].selo}>{SITUACOES[c.situacao].nome}</span>
+                    <Selo tom={SITUACOES[c.situacao].tom}>{SITUACOES[c.situacao].nome}</Selo>
                   </td>
                 </tr>
               ))}
               {lista.length === 0 && (
                 <tr>
-                  <td colSpan={5} style={{ color: "var(--text-secondary)" }}>
+                  <td colSpan={5} className="text-text-secondary">
                     Nenhum cadastro nesta situação.
                   </td>
                 </tr>
@@ -119,15 +122,14 @@ export default async function PedidosDeRevenda({ searchParams }: PageProps<"/pai
 
         {aberto && (
           <section
-            className="ad-card"
+            className={`${cartao} flex-[1_1_340px] min-w-0 p-6 flex flex-col gap-5`}
             aria-label="Detalhes do cadastro"
-            style={{ flex: "1 1 340px", minWidth: 0, padding: 24, display: "flex", flexDirection: "column", gap: 20 }}
           >
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <h2>{aberto.nome_loja}</h2>
-              <span className={SITUACOES[aberto.situacao].selo}>{SITUACOES[aberto.situacao].nome}</span>
+              <Selo tom={SITUACOES[aberto.situacao].tom}>{SITUACOES[aberto.situacao].nome}</Selo>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div className="flex flex-col gap-3.5">
               {[
                 ["Responsável", aberto.responsavel],
                 ["CNPJ ou CPF", aberto.documento],
@@ -136,61 +138,51 @@ export default async function PedidosDeRevenda({ searchParams }: PageProps<"/pai
                 ["Cidade", `${aberto.cidade}, ${aberto.uf}`],
                 ["Mensagem", aberto.mensagem ?? "Sem mensagem."],
               ].map(([rotulo, valor]) => (
-                <div key={rotulo} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                  <span className="ad-lab">{rotulo}</span>
-                  <span style={{ fontSize: 15, lineHeight: "24px", overflowWrap: "anywhere" }}>{valor}</span>
+                <div key={rotulo} className="flex flex-col gap-0.5">
+                  <span className={rotuloPainel}>{rotulo}</span>
+                  <span className="text-[15px] leading-6 wrap-anywhere">{valor}</span>
                 </div>
               ))}
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingTop: 20, borderTop: "1px solid var(--border)" }}>
-              <a className="mk-btn mk-btn--primary mk-btn--block" href={linkWhatsApp(aberto.whatsapp)} target="_blank" rel="noreferrer">
+            <div className="flex flex-col gap-2 pt-5 border-t border-t-border">
+              <Botao variante="primario" bloco href={linkWhatsApp(aberto.whatsapp)} target="_blank" rel="noreferrer">
                 <Icone nome="message" /> Responder no WhatsApp
-              </a>
-              <div style={{ display: "flex", gap: 8 }}>
-                <form action={mudarSituacao.bind(null, aberto.id, "em_contato")} style={{ flex: 1, display: "flex" }}>
-                  <button type="submit" className="mk-btn mk-btn--secondary" style={{ flex: 1 }} disabled={aberto.situacao === "em_contato"}>
+              </Botao>
+              <div className="flex gap-2">
+                <form action={mudarSituacao.bind(null, aberto.id, "em_contato")} className="flex-1 flex">
+                  <Botao variante="secundario" type="submit" className="flex-1" disabled={aberto.situacao === "em_contato"}>
                     Marcar em contato
-                  </button>
+                  </Botao>
                 </form>
-                <form action={mudarSituacao.bind(null, aberto.id, "aprovado")} style={{ flex: 1, display: "flex" }}>
-                  <button type="submit" className="mk-btn mk-btn--secondary" style={{ flex: 1 }} disabled={aberto.situacao === "aprovado"}>
+                <form action={mudarSituacao.bind(null, aberto.id, "aprovado")} className="flex-1 flex">
+                  <Botao variante="secundario" type="submit" className="flex-1" disabled={aberto.situacao === "aprovado"}>
                     Aprovar
-                  </button>
+                  </Botao>
                 </form>
               </div>
-              <form action={mudarSituacao.bind(null, aberto.id, "recusado")} style={{ alignSelf: "center" }}>
-                <button type="submit" className="mk-btn mk-btn--ghost" disabled={aberto.situacao === "recusado"}>
+              <form action={mudarSituacao.bind(null, aberto.id, "recusado")} className="self-center">
+                <Botao variante="fantasma" type="submit" disabled={aberto.situacao === "recusado"}>
                   Recusar cadastro
-                </button>
+                </Botao>
               </form>
               <ExcluirCadastro id={aberto.id} loja={aberto.nome_loja} />
             </div>
             {/* key: ao trocar de cadastro, o campo recomeça com as anotações do novo. */}
-            <form key={aberto.id} action={salvarAnotacoes.bind(null, aberto.id)} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <span style={{ fontWeight: 600, fontSize: 14, lineHeight: "16px" }}>Anotações internas</span>
+            <form key={aberto.id} action={salvarAnotacoes.bind(null, aberto.id)} className="flex flex-col gap-2">
+              <label className="flex flex-col gap-1.5">
+                <span className="font-semibold text-[14px] leading-4">Anotações internas</span>
                 <textarea
                   name="anotacoes"
                   rows={3}
                   maxLength={4000}
                   defaultValue={aberto.anotacoes ?? ""}
                   placeholder="Ex.: pediu a tabela de transmissão. Ligar na sexta."
-                  style={{
-                    boxSizing: "border-box",
-                    width: "100%",
-                    padding: "10px 12px",
-                    border: "1.5px solid var(--border-strong)",
-                    borderRadius: 4,
-                    background: "var(--bg)",
-                    font: "400 14px/22px var(--font-sans)",
-                    color: "var(--text)",
-                    resize: "vertical",
-                  }}
+                  className="box-border w-full py-2.5 px-3 border-[1.5px] border-border-strong rounded-md bg-bg [font:400_14px/22px_var(--font-sans)] text-text [resize:vertical]"
                 />
               </label>
-              <button type="submit" className="mk-btn mk-btn--secondary" style={{ alignSelf: "flex-start" }}>
+              <Botao variante="secundario" type="submit" className="self-start">
                 Salvar anotações
-              </button>
+              </Botao>
             </form>
           </section>
         )}

@@ -1,16 +1,17 @@
-import Link from "next/link";
+import { Botao } from "@/components/Botao";
+import { rotulo, tituloH1 } from "@/components/estilos";
 
 export default function NaoEncontrada() {
   return (
-    <main style={{ padding: "96px var(--margem)", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 20 }}>
-      <span className="st-rotulo">Erro 404</span>
-      <h1 className="st-h1">Página não encontrada</h1>
-      <p style={{ margin: 0, fontSize: 18, lineHeight: "28px", color: "var(--text-secondary)", maxWidth: 520 }}>
+    <main className="py-24 px-(--margem) flex flex-col items-start gap-5">
+      <span className={rotulo}>Erro 404</span>
+      <h1 className={tituloH1}>Página não encontrada</h1>
+      <p className="m-0 text-[18px] leading-7 text-text-secondary max-w-130">
         O endereço pode ter mudado ou a peça pode ter saído do catálogo.
       </p>
-      <Link className="mk-btn mk-btn--dark mk-btn--lg" href="/catalogo">
+      <Botao variante="escuro" grande href="/catalogo">
         Ver o catálogo
-      </Link>
+      </Botao>
     </main>
   );
 }

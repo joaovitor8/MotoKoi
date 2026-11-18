@@ -4,14 +4,17 @@ import { useRef, useState } from "react";
 import { urlDoMaterial } from "@/lib/fotos";
 import { clienteDoNavegador } from "@/lib/supabase-navegador";
 import { conteudoMudou } from "./acoes";
+import { Botao } from "@/components/Botao";
+import { Selo } from "@/components/Selo";
+import { cartao, entrada, tabela } from "@/app/painel/estilos";
 
 export type Material = { id: number; titulo: string; tipo: string; caminho: string; tamanho_bytes: number | null; atualizado_em: string };
 
 const TIPOS = { catalogo: "Catálogo", fotos: "Fotos", fichas: "Fichas", logo: "Logo", outro: "Outro" };
 // Mesmos limites do bucket "materiais" (migração concorrencia): PDF, ZIP, PNG ou SVG, até 50 MB.
 const ACEITOS = ["application/pdf", "application/zip", "application/x-zip-compressed", "image/png", "image/svg+xml"];
-const rotulo = { fontWeight: 600, fontSize: 14, lineHeight: "16px" } as const;
-const seletor = { all: "unset", flex: 1, minWidth: 0 } as const;
+// "!": vence o all: unset, que no CSS do Tailwind vem depois.
+const seletor = "[all:unset] flex-1! min-w-0!";
 
 // Arquivos para o lojista baixar (página Seja revendedor). O arquivo vai direto do navegador para o Storage
 // e depois ganha uma linha na tabela "materiais". Um PDF do tipo "Catálogo" vira também o catálogo do site
@@ -76,23 +79,23 @@ export function Materiais({ materiais, catalogoAtual }: { materiais: Material[];
     });
 
   return (
-    <section className="ad-card" aria-busy={ocupado} style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+    <section className={`${cartao} p-6 flex flex-col gap-4`} aria-busy={ocupado}>
+      <div className="flex flex-col gap-1">
         <h2>Materiais para lojistas</h2>
-        <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+        <span className="text-[14px] leading-5 text-text-muted">
           Arquivos para baixar na página Seja revendedor. Um PDF do tipo “Catálogo” vira também o catálogo do site.
         </span>
       </div>
       {materiais.length > 0 && (
-        <div style={{ overflowX: "auto" }}>
-          <table className="ad-table">
+        <div className="overflow-x-auto">
+          <table className={tabela}>
             <thead>
               <tr>
                 <th>Arquivo</th>
                 <th>Tipo</th>
                 <th>Formato</th>
                 <th>
-                  <span style={{ position: "absolute", left: -9999 }}>Ações</span>
+                  <span className="absolute -left-[9999px]">Ações</span>
                 </th>
               </tr>
             </thead>
@@ -100,22 +103,22 @@ export function Materiais({ materiais, catalogoAtual }: { materiais: Material[];
               {materiais.map((m) => (
                 <tr key={m.id}>
                   <td>
-                    <a href={urlDoMaterial(m.caminho)} target="_blank" rel="noreferrer" style={{ fontWeight: 600 }}>
+                    <a href={urlDoMaterial(m.caminho)} target="_blank" rel="noreferrer" className="font-semibold">
                       {m.titulo}
                     </a>
-                    {m.caminho === catalogoAtual && <span className="mk-badge mk-badge--success" style={{ marginLeft: 8 }}>Catálogo do site</span>}
+                    {m.caminho === catalogoAtual && <Selo tom="sucesso" className="ml-2">Catálogo do site</Selo>}
                   </td>
-                  <td style={{ color: "var(--text-secondary)" }}>{TIPOS[m.tipo as keyof typeof TIPOS] ?? m.tipo}</td>
-                  <td style={{ color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
+                  <td className="text-text-secondary">{TIPOS[m.tipo as keyof typeof TIPOS] ?? m.tipo}</td>
+                  <td className="text-text-secondary whitespace-nowrap">
                     {m.caminho.split(".").pop()?.toUpperCase()}
                     {m.tamanho_bytes ? ` · ${(m.tamanho_bytes / 1024 / 1024).toFixed(1).replace(".", ",")} MB` : ""}
                   </td>
-                  <td style={{ textAlign: "right" }}>
+                  <td className="text-right">
                     <button
                       type="button"
                       disabled={ocupado}
                       onClick={() => window.confirm(`Remover “${m.titulo}”? Não dá para desfazer.`) && remover(m)}
-                      style={{ all: "unset", cursor: "pointer", fontWeight: 600, color: "var(--text-brand)", textDecoration: "underline" }}
+                      className="[all:unset] cursor-pointer! font-semibold! text-text-brand! underline!"
                     >
                       Remover
                     </button>
@@ -126,23 +129,23 @@ export function Materiais({ materiais, catalogoAtual }: { materiais: Material[];
           </table>
         </div>
       )}
-      <form ref={formulario} action={enviar} style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 12, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
-        <label style={{ flex: "2 1 200px", minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-          <span style={rotulo}>Título</span>
-          <span className="ad-in">
+      <form ref={formulario} action={enviar} className="flex flex-wrap items-end gap-3 pt-4 border-t border-t-border">
+        <label className="flex-[2_1_200px] min-w-0 flex flex-col gap-1.5">
+          <span className="font-semibold text-[14px] leading-4">Título</span>
+          <span className={entrada}>
             <input name="titulo" required maxLength={80} placeholder="Ex.: Catálogo completo" />
           </span>
         </label>
-        <label style={{ flex: "3 1 240px", minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-          <span style={rotulo}>Descrição (opcional)</span>
-          <span className="ad-in">
+        <label className="flex-[3_1_240px] min-w-0 flex flex-col gap-1.5">
+          <span className="font-semibold text-[14px] leading-4">Descrição (opcional)</span>
+          <span className={entrada}>
             <input name="descricao" maxLength={160} placeholder="Ex.: Todas as peças, códigos e aplicações" />
           </span>
         </label>
-        <label style={{ flex: "1 1 140px", minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-          <span style={rotulo}>Tipo</span>
-          <span className="ad-in">
-            <select name="tipo" defaultValue="catalogo" style={seletor}>
+        <label className="flex-[1_1_140px] min-w-0 flex flex-col gap-1.5">
+          <span className="font-semibold text-[14px] leading-4">Tipo</span>
+          <span className={entrada}>
+            <select name="tipo" defaultValue="catalogo" className={seletor}>
               {Object.entries(TIPOS).map(([valor, nome]) => (
                 <option key={valor} value={valor}>
                   {nome}
@@ -151,16 +154,16 @@ export function Materiais({ materiais, catalogoAtual }: { materiais: Material[];
             </select>
           </span>
         </label>
-        <label style={{ flex: "2 1 220px", minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-          <span style={rotulo}>Arquivo (PDF, ZIP, PNG ou SVG, até 50 MB)</span>
-          <input name="arquivo" type="file" required accept={ACEITOS.join(",")} style={{ maxWidth: "100%", fontSize: 13 }} />
+        <label className="flex-[2_1_220px] min-w-0 flex flex-col gap-1.5">
+          <span className="font-semibold text-[14px] leading-4">Arquivo (PDF, ZIP, PNG ou SVG, até 50 MB)</span>
+          <input name="arquivo" type="file" required accept={ACEITOS.join(",")} className="max-w-full text-[13px]" />
         </label>
-        <button type="submit" disabled={ocupado} className="mk-btn mk-btn--secondary">
+        <Botao variante="secundario" type="submit" disabled={ocupado}>
           {ocupado ? "Enviando…" : "+ Enviar arquivo"}
-        </button>
+        </Botao>
       </form>
       {erro && (
-        <p role="alert" style={{ margin: 0, fontWeight: 600, fontSize: 14, lineHeight: "20px", color: "var(--text-danger)" }}>
+        <p role="alert" className="m-0 font-semibold text-[14px] leading-5 text-text-danger">
           {erro}
         </p>
       )}

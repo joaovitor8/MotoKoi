@@ -1,0 +1,153 @@
+/* Único arquivo de CSS do site. Ordem das camadas: tema do Tailwind, regras globais (base) e as classes do
+   Tailwind por último. Todo o resto do visual está nas classes dos componentes. */
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+/* Sem o "preflight" (o reset do Tailwind): ele zeraria margens, títulos e listas e mudaria o visual aprovado. */
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@layer base {
+  /* Tokens do design system (cores, espaços, raios, sombras, fontes). O tema do Tailwind, mais abaixo, lê daqui. */
+  :root {
+    --red-50: #fff1f1;
+    --red-400: #ff5a61;
+    --red-500: #e3141f;
+    --red-600: #be0f18;
+    --red-700: #9c0f16;
+    --neutral-0: #ffffff;
+    --neutral-50: #f6f6f5;
+    --neutral-100: #edecea;
+    --neutral-200: #dad8d4;
+    --neutral-300: #b9b6b0;
+    --neutral-400: #8f8c86;
+    --neutral-500: #6b6863;
+    --neutral-600: #4d4b47;
+    --neutral-700: #33322f;
+    --neutral-900: #151413;
+    --neutral-950: #0b0b0a;
+    --bg: #ffffff;
+    --bg-subtle: #f6f6f5;
+    --bg-muted: #edecea;
+    --bg-inverse: #0b0b0a;
+    --brand: #e3141f;
+    --brand-hover: #be0f18;
+    --brand-subtle: #fff1f1;
+    --text: #151413;
+    --text-secondary: #4d4b47;
+    --text-muted: #6b6863;
+    --text-inverse: #ffffff;
+    --text-inverse-muted: #b9b6b0;
+    --text-brand: #9c0f16;
+    --text-brand-on-dark: #ff5a61;
+    --text-on-brand: #ffffff;
+    --text-success: #157a40;
+    --success-subtle: #ddf5e7;
+    --text-warning: #7a5c00;
+    --warning-subtle: #fdf3cf;
+    --text-danger: #9c0f16;
+    --border: #dad8d4;
+    --border-strong: #8f8c86;
+    --border-inverse: #33322f;
+    --border-danger: #9c0f16;
+    --focus: #e3141f;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-24: 96px;
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --radius-lg: 8px;
+    --shadow-sm: 0 1px 3px rgba(21,20,19,.08);
+    --shadow-md: 0 8px 24px -4px rgba(21,20,19,.12);
+    --shadow-lg: 0 20px 40px -8px rgba(21,20,19,.18);
+    --font-display: "Barlow Condensed","Arial Narrow",sans-serif;
+    --font-sans: Barlow,system-ui,sans-serif;
+  }
+
+  /* Margem lateral das páginas do site: 24 px no celular, conteúdo de no máximo 1312 px no computador. */
+  :root { --margem: max(24px, calc((100% - 1312px) / 2)); }
+
+  html, body { height: 100%; }
+  body { margin: 0; font-family: var(--font-sans); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+  a { color: var(--text-brand); }
+  a:hover { color: var(--brand-hover); }
+
+  /* Foco visível no teclado. Vários campos usam "all: unset", que apaga o contorno padrão do navegador;
+     aqui o contorno volta. Só aparece ao navegar pelo teclado. */
+  a:focus-visible, button:focus-visible, summary:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  label:not([data-marcacao]):has(> input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+}
+
+/* O Tailwind lê os arquivos do projeto para saber quais classes gerar; o material de referência fica de fora. */
+@source not "../../referencias";
+
+/* Tema: as classes do Tailwind usam os mesmos valores dos tokens acima.
+   Regra para lembrar: a classe é o prefixo + o nome da variável. Ex.: var(--text-muted) -> text-text-muted,
+   var(--brand) -> bg-brand, var(--border) -> border-border, var(--radius-md) -> rounded-md. */
+@theme inline {
+  --color-*: initial; /* sem a paleta padrão do Tailwind: só as cores da marca */
+  --color-red-50: var(--red-50);
+  --color-red-400: var(--red-400);
+  --color-red-500: var(--red-500);
+  --color-red-600: var(--red-600);
+  --color-red-700: var(--red-700);
+  --color-neutral-0: var(--neutral-0);
+  --color-neutral-50: var(--neutral-50);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-900: var(--neutral-900);
+  --color-neutral-950: var(--neutral-950);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-bg-muted: var(--bg-muted);
+  --color-bg-inverse: var(--bg-inverse);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-subtle: var(--brand-subtle);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+  --color-text-inverse-muted: var(--text-inverse-muted);
+  --color-text-brand: var(--text-brand);
+  --color-text-brand-on-dark: var(--text-brand-on-dark);
+  --color-text-on-brand: var(--text-on-brand);
+  --color-text-success: var(--text-success);
+  --color-success-subtle: var(--success-subtle);
+  --color-text-warning: var(--text-warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-text-danger: var(--text-danger);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-border-inverse: var(--border-inverse);
+  --color-border-danger: var(--border-danger);
+  --color-focus: var(--focus);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+}
+
+@theme {
+  /* 1 unidade = 4 px, como a escala --space-* (p-1 = 4px, p-4 = 16px, p-6 = 24px). Em px, não em rem. */
+  --spacing: 4px;
+  /* Os valores reais das fontes vêm do next/font, no <html> (src/app/layout.tsx); aqui só registra as classes. */
+  --font-sans: Barlow, system-ui, sans-serif;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+}

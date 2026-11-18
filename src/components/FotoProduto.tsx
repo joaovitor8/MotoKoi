@@ -15,8 +15,8 @@ export function FotoProduto({
   style?: CSSProperties;
 }) {
   return (
-    <div style={{ position: "relative", aspectRatio: proporcao, background: "var(--bg-subtle)", borderRadius: 8, overflow: "hidden", ...style }}>
-      <Image src={foto.url} alt={foto.alt} fill sizes={tamanhos} style={{ objectFit: "contain" }} />
+    <div className="relative overflow-hidden rounded-lg bg-bg-subtle" style={{ aspectRatio: proporcao, ...style }}>
+      <Image src={foto.url} alt={foto.alt} fill sizes={tamanhos} className="object-contain" />
     </div>
   );
 }

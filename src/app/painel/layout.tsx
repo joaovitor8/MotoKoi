@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import "../painel.css";
 
 export const metadata: Metadata = {
   title: { default: "Painel MotoKoi", template: "Painel MotoKoi — %s" },

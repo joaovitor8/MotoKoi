@@ -25,7 +25,7 @@ export function SeletorQueEnvia({
   style?: CSSProperties;
 }) {
   return (
-    <form action={acao} style={{ display: "contents" }}>
+    <form action={acao} className="contents">
       {ocultos.map(([campo, v], i) => (
         <input key={i} type="hidden" name={campo} value={v} />
       ))}
@@ -35,7 +35,7 @@ export function SeletorQueEnvia({
           aria-label={rotulo}
           defaultValue={valor}
           onChange={(e) => e.currentTarget.form?.requestSubmit()}
-          style={{ all: "unset", flex: 1, minWidth: 0 }}
+          className="[all:unset] flex-1! min-w-0!"
         >
           {opcoes.map((o) => (
             <option key={o.valor} value={o.valor}>

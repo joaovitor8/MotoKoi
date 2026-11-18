@@ -9,6 +9,10 @@ import { Icone } from "@/components/Icone";
 import { obterConteudo } from "@/lib/conteudo";
 import { listarProdutos } from "@/lib/produtos";
 import { Galeria } from "./Galeria";
+import { Botao, classesBotao } from "@/components/Botao";
+import { LinkWhatsApp } from "@/components/LinkWhatsApp";
+import { Selo } from "@/components/Selo";
+import { rotulo, tituloH2 } from "@/components/estilos";
 
 type Props = PageProps<"/catalogo/[slug]">;
 
@@ -20,28 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   return { title: (await listarProdutos()).find((p) => p.slug === slug)?.nome };
 }
-
-const h2 = {
-  margin: 0,
-  fontFamily: "var(--font-display)",
-  fontWeight: 700,
-  fontSize: 32,
-  lineHeight: "34px",
-  textTransform: "uppercase",
-} as const;
-const th = {
-  textAlign: "left",
-  padding: "12px 0",
-  borderBottom: "1px solid var(--border)",
-  fontWeight: 600,
-  fontSize: 12,
-  lineHeight: "16px",
-  letterSpacing: ".2em",
-  textTransform: "uppercase",
-  color: "var(--text-muted)",
-} as const;
-const garantia = { display: "flex", flexWrap: "wrap", alignItems: "center", gap: "4px 16px", padding: "14px 0", borderBottom: "1px solid var(--border)" } as const;
-const td = { padding: "14px 0", borderBottom: "1px solid var(--border)", color: "var(--text-secondary)" };
+const garantia = "flex flex-wrap items-center gap-y-1 gap-x-4 py-3.5 px-0 border-b border-b-border";
 
 export default function PaginaProduto({ params }: Props) {
   return (
@@ -72,37 +55,21 @@ async function Conteudo({ params }: Pick<Props, "params">) {
     <>
         <nav
           aria-label="Você está em"
-          style={{
-            padding: "24px var(--margem) 0",
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 8,
-            fontSize: 14,
-            lineHeight: "20px",
-            color: "var(--text-muted)",
-          }}
+          className="px-(--margem) pt-6 pb-0 flex flex-wrap gap-2 text-[14px] leading-5 text-text-muted"
         >
-          <Link href="/catalogo" style={{ color: "var(--text-muted)" }}>
+          <Link href="/catalogo" className="text-text-muted">
             Catálogo
           </Link>
           <span aria-hidden="true">/</span>
-          <Link href={`/catalogo?categoria=${produto.categoria.slug}`} style={{ color: "var(--text-muted)" }}>
+          <Link href={`/catalogo?categoria=${produto.categoria.slug}`} className="text-text-muted">
             {produto.categoria.nome}
           </Link>
           <span aria-hidden="true">/</span>
-          <span style={{ color: "var(--text)" }}>{produto.nome}</span>
+          <span className="text-text">{produto.nome}</span>
         </nav>
 
-        <section
-          style={{
-            padding: "32px var(--margem) 96px",
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "flex-start",
-            gap: "48px 72px",
-          }}
-        >
-          <div style={{ flex: "1 1 520px", minWidth: 0, display: "flex", flexDirection: "column", gap: 16 }}>
+        <section className="px-(--margem) pt-8 pb-24 flex flex-wrap items-start gap-y-12 gap-x-18">
+          <div className="flex-[1_1_520px] min-w-0 flex flex-col gap-4">
             {produto.fotos.length > 0 ? (
               <Galeria fotos={produto.fotos} />
             ) : (
@@ -112,17 +79,11 @@ async function Conteudo({ params }: Pick<Props, "params">) {
                   proporcao="1 / 1"
                   icone={64}
                 />
-                <div style={{ display: "flex", gap: 16 }}>
+                <div className="flex gap-4">
                   {[1, 2, 3, 4].map((n) => (
                     <div
                       key={n}
-                      style={{
-                        flex: "1 1 0",
-                        minWidth: 0,
-                        border: n === 1 ? "2px solid var(--text)" : "1px solid var(--border)",
-                        borderRadius: 8,
-                        overflow: "hidden",
-                      }}
+                      className={`min-w-0 flex-[1_1_0] overflow-hidden rounded-lg ${n === 1 ? "border-2 border-text" : "border border-border"}`}
                     >
                       <EspacoFoto texto={`[FOTO ${n}]`} proporcao="1 / 1" icone={24} style={{ borderRadius: 0 }} />
                     </div>
@@ -132,25 +93,15 @@ async function Conteudo({ params }: Pick<Props, "params">) {
             )}
           </div>
 
-          <div style={{ flex: "1 1 440px", minWidth: 0, display: "flex", flexDirection: "column", gap: 24 }}>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
-              <span className="st-rotulo">{produto.categoria.nome}</span>
-              {produto.novidade && <span className="mk-badge mk-badge--brand">Novidade</span>}
+          <div className="flex-[1_1_440px] min-w-0 flex flex-col gap-6">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className={rotulo}>{produto.categoria.nome}</span>
+              {produto.novidade && <Selo tom="marca">Novidade</Selo>}
             </div>
-            <h1
-              style={{
-                margin: 0,
-                fontFamily: "var(--font-display)",
-                fontWeight: 800,
-                fontSize: "clamp(52px, 5.6vw, 84px)",
-                lineHeight: 0.9,
-                letterSpacing: "-.01em",
-                textTransform: "uppercase",
-              }}
-            >
+            <h1 className="m-0 font-display font-extrabold [font-size:clamp(52px,_5.6vw,_84px)] leading-[0.9] tracking-[-.01em] uppercase">
               {produto.nome}
             </h1>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 20px", fontWeight: 500, fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+            <div className="flex flex-wrap gap-y-1 gap-x-5 font-medium text-[14px] leading-5 text-text-muted">
               <span>Cód. MotoKoi {produto.codigo ?? "[CÓDIGO]"}</span>
               {produto.codigosOriginais.length > 0 ? (
                 produto.codigosOriginais.map((c) => (
@@ -162,93 +113,67 @@ async function Conteudo({ params }: Pick<Props, "params">) {
                 <span>Cód. original [CÓDIGO ORIGINAL]</span>
               )}
             </div>
-            <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)", maxWidth: 520 }}>
+            <p className="m-0 text-[17px] leading-7 text-text-secondary max-w-130">
               {produto.descricao ?? "[DESCRIÇÃO DA PEÇA]"}
             </p>
             {produto.especificacoes.length > 0 && (
-              <dl style={{ margin: 0, borderTop: "1.5px solid var(--text)" }}>
+              <dl className="m-0 border-t-[1.5px] border-t-text">
                 {produto.especificacoes.map(({ rotulo, valor }) => (
                   <div
                     key={rotulo}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      gap: 24,
-                      padding: "14px 0",
-                      borderBottom: "1px solid var(--border)",
-                    }}
+                    className="flex justify-between gap-6 py-3.5 px-0 border-b border-b-border"
                   >
-                    <dt style={{ fontSize: 15, lineHeight: "24px", color: "var(--text-secondary)" }}>{rotulo}</dt>
-                    <dd
-                      style={{
-                        margin: 0,
-                        fontFamily: "var(--font-display)",
-                        fontWeight: 700,
-                        fontSize: 24,
-                        lineHeight: "24px",
-                        textTransform: "uppercase",
-                      }}
-                    >
+                    <dt className="text-[15px] leading-6 text-text-secondary">{rotulo}</dt>
+                    <dd className="m-0 font-display font-bold text-[24px] leading-6 uppercase">
                       {valor}
                     </dd>
                   </div>
                 ))}
               </dl>
             )}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 12, paddingTop: 8 }}>
-              <Link className="mk-btn mk-btn--dark mk-btn--lg" href="/onde-comprar">
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Botao variante="escuro" grande href="/onde-comprar">
                 <Icone nome="map-pin" /> Onde comprar
-              </Link>
-              <a className="mk-btn mk-btn--secondary mk-btn--lg" href={conteudo.whatsapp?.link ?? "#"}>
+              </Botao>
+              <LinkWhatsApp whatsapp={conteudo.whatsapp} className={classesBotao({ variante: "secundario", grande: true })}>
                 <Icone nome="message" /> Falar no WhatsApp
-              </a>
+              </LinkWhatsApp>
             </div>
-            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", borderTop: "1px solid var(--border)" }}>
-              <li style={garantia}>
-                <span style={{ fontSize: 22, color: "var(--brand)" }}>
+            <ul className="list-none m-0 p-0 flex flex-col border-t border-t-border">
+              <li className={garantia}>
+                <span className="text-[22px] text-brand">
                   <Icone nome="shield" />
                 </span>
-                <span style={{ flex: "1 1 200px", fontSize: 15, lineHeight: "24px" }}>
-                  <b style={{ fontWeight: 600 }}>Garantia de {produto.garantiaMeses ?? conteudo.garantiaMeses ?? "[N]"} meses</b> contra defeito de fabricação
+                <span className="flex-[1_1_200px] text-[15px] leading-6">
+                  <b className="font-semibold">Garantia de {produto.garantiaMeses ?? conteudo.garantiaMeses ?? "[N]"} meses</b> contra defeito de fabricação
                 </span>
-                <Link href="/garantia" style={{ fontWeight: 600, fontSize: 14, lineHeight: "20px" }}>
+                <Link href="/garantia" className="font-semibold text-[14px] leading-5">
                   Como acionar
                 </Link>
               </li>
               {produto.inmetro && (
-                <li style={garantia}>
-                  <span className="mk-badge" style={{ background: "var(--text)", color: "var(--text-inverse)" }}>
+                <li className={garantia}>
+                  <Selo tom="escuro">
                     Inmetro
-                  </span>
-                  <span style={{ flex: "1 1 200px", fontSize: 15, lineHeight: "24px" }}>Registro nº {produto.inmetro}</span>
+                  </Selo>
+                  <span className="flex-[1_1_200px] text-[15px] leading-6">Registro nº {produto.inmetro}</span>
                 </li>
               )}
               {produto.fichaTecnica && (
-                <li style={garantia}>
-                  <span style={{ fontSize: 22, color: "var(--text-muted)" }}>
+                <li className={garantia}>
+                  <span className="text-[22px] text-text-muted">
                     <Icone nome="file" />
                   </span>
-                  <span style={{ flex: "1 1 200px", fontSize: 15, lineHeight: "24px" }}>Ficha técnica e instruções de instalação</span>
-                  <a href={produto.fichaTecnica} style={{ fontWeight: 600, fontSize: 14, lineHeight: "20px" }}>
+                  <span className="flex-[1_1_200px] text-[15px] leading-6">Ficha técnica e instruções de instalação</span>
+                  <a href={produto.fichaTecnica} className="font-semibold text-[14px] leading-5">
                     Baixar PDF
                   </a>
                 </li>
               )}
             </ul>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "8px 24px",
-                padding: "16px 20px",
-                background: "var(--bg-subtle)",
-                borderRadius: 8,
-              }}
-            >
-              <span style={{ fontSize: 15, lineHeight: "24px" }}>É lojista ou tem oficina?</span>
-              <Link href="/seja-revendedor" style={{ fontWeight: 600, fontSize: 15, lineHeight: "24px" }}>
+            <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-6 py-4 px-5 bg-bg-subtle rounded-lg">
+              <span className="text-[15px] leading-6">É lojista ou tem oficina?</span>
+              <Link href="/seja-revendedor" className="font-semibold text-[15px] leading-6">
                 Peça a tabela de revenda
               </Link>
             </div>
@@ -256,32 +181,24 @@ async function Conteudo({ params }: Pick<Props, "params">) {
         </section>
 
         {(produto.motos.length > 0 || produto.itensCaixa.length > 0) && (
-          <section style={{ padding: "0 var(--margem) 112px", display: "flex", flexWrap: "wrap", gap: "64px 72px" }}>
+          <section className="px-(--margem) pt-0 pb-28 flex flex-wrap gap-y-16 gap-x-18">
             {produto.motos.length > 0 && (
-              <div style={{ flex: "1 1 520px", minWidth: 0, display: "flex", flexDirection: "column", gap: 24 }}>
-                <h2 style={h2}>Serve em</h2>
-                <table
-                  style={{
-                    width: "100%",
-                    borderCollapse: "collapse",
-                    fontSize: 16,
-                    lineHeight: "24px",
-                    borderTop: "1.5px solid var(--text)",
-                  }}
-                >
+              <div className="flex-[1_1_520px] min-w-0 flex flex-col gap-6">
+                <h2 className="m-0 font-display font-bold text-[32px] leading-[34px] uppercase">Serve em</h2>
+                <table className="w-full [border-collapse:collapse] text-[16px] leading-6 border-t-[1.5px] border-t-text">
                   <thead>
                     <tr>
-                      <th style={th}>Modelo</th>
-                      <th style={th}>Anos</th>
-                      <th style={th}>Observação</th>
+                      <th className="text-left py-3 px-0 border-b border-b-border font-semibold text-[12px] leading-4 tracking-[.2em] uppercase text-text-muted">Modelo</th>
+                      <th className="text-left py-3 px-0 border-b border-b-border font-semibold text-[12px] leading-4 tracking-[.2em] uppercase text-text-muted">Anos</th>
+                      <th className="text-left py-3 px-0 border-b border-b-border font-semibold text-[12px] leading-4 tracking-[.2em] uppercase text-text-muted">Observação</th>
                     </tr>
                   </thead>
                   <tbody>
                     {produto.motos.map((c) => (
                       <tr key={c.slug}>
-                        <td style={{ ...td, color: undefined, fontWeight: 600 }}>{c.modelo}</td>
-                        <td style={td}>{c.anos ?? "[ANOS]"}</td>
-                        <td style={td}>{c.observacao ?? "[OBSERVAÇÃO]"}</td>
+                        <td className="py-3.5 px-0 border-b border-b-border font-semibold">{c.modelo}</td>
+                        <td className="py-3.5 px-0 border-b border-b-border text-text-secondary">{c.anos ?? "[ANOS]"}</td>
+                        <td className="py-3.5 px-0 border-b border-b-border text-text-secondary">{c.observacao ?? "[OBSERVAÇÃO]"}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -289,32 +206,18 @@ async function Conteudo({ params }: Pick<Props, "params">) {
               </div>
             )}
             {produto.itensCaixa.length > 0 && (
-              <div style={{ flex: "1 1 360px", minWidth: 0, display: "flex", flexDirection: "column", gap: 24 }}>
-                <h2 style={h2}>Na caixa</h2>
-                <ul style={{ listStyle: "none", margin: 0, padding: 0, borderTop: "1.5px solid var(--text)" }}>
+              <div className="flex-[1_1_360px] min-w-0 flex flex-col gap-6">
+                <h2 className="m-0 font-display font-bold text-[32px] leading-[34px] uppercase">Na caixa</h2>
+                <ul className="list-none m-0 p-0 border-t-[1.5px] border-t-text">
                   {produto.itensCaixa.map((item) => (
                     <li
                       key={item.descricao}
-                      style={{
-                        display: "flex",
-                        gap: 16,
-                        alignItems: "baseline",
-                        padding: "14px 0",
-                        borderBottom: "1px solid var(--border)",
-                      }}
+                      className="flex gap-4 items-baseline py-3.5 px-0 border-b border-b-border"
                     >
-                      <span
-                        style={{
-                          fontFamily: "var(--font-display)",
-                          fontWeight: 800,
-                          fontSize: 28,
-                          lineHeight: "28px",
-                          color: "var(--brand)",
-                        }}
-                      >
+                      <span className="font-display font-extrabold text-[28px] leading-7 text-brand">
                         {item.quantidade}
                       </span>
-                      <span style={{ fontSize: 17, lineHeight: "28px" }}>{item.descricao}</span>
+                      <span className="text-[17px] leading-7">{item.descricao}</span>
                     </li>
                   ))}
                 </ul>
@@ -324,19 +227,11 @@ async function Conteudo({ params }: Pick<Props, "params">) {
         )}
 
         {mesmaAplicacao.length > 0 && (
-          <section
-            style={{
-              background: "var(--bg-subtle)",
-              padding: "96px var(--margem)",
-              display: "flex",
-              flexDirection: "column",
-              gap: 48,
-            }}
-          >
-            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-end", gap: 24 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <span className="st-rotulo">Para a mesma moto</span>
-                <h2 className="st-h2">
+          <section className="bg-bg-subtle py-24 px-(--margem) flex flex-col gap-12">
+            <div className="flex flex-wrap justify-between items-end gap-6">
+              <div className="flex flex-col gap-4">
+                <span className={rotulo}>Para a mesma moto</span>
+                <h2 className={tituloH2}>
                   Mais peças
                   <br />
                   para {moto.nome}
@@ -344,12 +239,12 @@ async function Conteudo({ params }: Pick<Props, "params">) {
               </div>
               <Link
                 href={{ pathname: "/catalogo", query: { moto: moto.slug } }}
-                style={{ fontWeight: 600, fontSize: 16, lineHeight: "20px", padding: "12px 0" }}
+                className="font-semibold text-[16px] leading-5 py-3 px-0"
               >
                 Ver todas
               </Link>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 32 }}>
+            <div className="grid [grid-template-columns:repeat(auto-fill,_minmax(260px,_1fr))] gap-8">
               {mesmaAplicacao.map((p) => (
                 <CartaoProduto key={p.slug} produto={p} fundoFoto="var(--bg)" />
               ))}

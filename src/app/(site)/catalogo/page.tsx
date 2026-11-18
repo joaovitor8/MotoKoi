@@ -8,6 +8,9 @@ import { SeletorQueEnvia } from "@/components/SeletorQueEnvia";
 import { anoAtual as lerAnoAtual, obterConteudo } from "@/lib/conteudo";
 import type { Filtros } from "@/lib/filtro";
 import { filtrarProdutos, listarCategorias, listarMotos, listarProdutos } from "@/lib/produtos";
+import { Botao } from "@/components/Botao";
+import { CaixaMarcacao, classesMarcacao } from "@/components/Marcacao";
+import { focoNaCaixa, rotulo, tituloH1 } from "@/components/estilos";
 
 export const metadata: Metadata = { title: "Catálogo" };
 
@@ -24,16 +27,7 @@ function endereco({ categoria, motos, ano, busca }: Filtros, pagina = 1) {
   return q.size ? `/catalogo?${q}` : "/catalogo";
 }
 
-const tituloFiltro = {
-  fontWeight: 600,
-  fontSize: 12,
-  lineHeight: "16px",
-  letterSpacing: ".2em",
-  textTransform: "uppercase",
-  color: "var(--text-muted)",
-  paddingBottom: 12,
-  borderBottom: "1.5px solid var(--text)",
-} as const;
+const tituloFiltro = "font-semibold text-[12px] leading-4 tracking-[.2em] uppercase text-text-muted pb-3 border-b-[1.5px] border-b-text";
 
 export default function Catalogo({ searchParams }: PageProps<"/catalogo">) {
   return (
@@ -79,34 +73,23 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/catalogo">, "searchPa
 
   return (
     <>
-      <section
-        style={{
-          padding: "64px var(--margem) 48px",
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "flex-end",
-          justifyContent: "space-between",
-          gap: "32px 64px",
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <span className="st-rotulo">Catálogo</span>
-          <h1 className="st-h1">
+      <section className="px-(--margem) pt-16 pb-12 flex flex-wrap items-end justify-between gap-y-8 gap-x-16">
+        <div className="flex flex-col gap-4">
+          <span className={rotulo}>Catálogo</span>
+          <h1 className={tituloH1}>
             Todas
             <br />
             as peças
           </h1>
         </div>
-        <form action="/catalogo" role="search" style={{ flex: "1 1 420px", maxWidth: 600 }}>
+        <form action="/catalogo" role="search" className="flex-[1_1_420px] max-w-150">
           {filtros.categoria && <input type="hidden" name="categoria" value={filtros.categoria} />}
           {filtros.motos.map((m) => (
             <input key={m} type="hidden" name="moto" value={m} />
           ))}
           {filtros.ano && <input type="hidden" name="ano" value={filtros.ano} />}
-          <label
-            style={{ display: "flex", alignItems: "center", gap: 16, padding: "12px 0", borderBottom: "2px solid var(--text)" }}
-          >
-            <span style={{ fontSize: 26, color: "var(--text-muted)" }}>
+          <label className="flex items-center gap-4 py-3 px-0 border-b-[2px] border-b-text">
+            <span className="text-[26px] text-text-muted">
               <Icone nome="search" />
             </span>
             <input
@@ -114,24 +97,16 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/catalogo">, "searchPa
               defaultValue={filtros.busca}
               aria-label="Buscar no catálogo"
               placeholder="Peça, código MotoKoi, código original ou moto"
-              style={{ all: "unset", flexGrow: 1, minWidth: 0, fontSize: 22, lineHeight: "36px" }}
+              className="[all:unset] grow! min-w-0! text-[22px]! leading-9!"
             />
           </label>
         </form>
       </section>
 
-      <section
-        style={{
-          padding: "0 var(--margem) 112px",
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "flex-start",
-          gap: "48px 64px",
-        }}
-      >
-        <aside aria-label="Filtros" style={{ flex: "0 0 240px", display: "flex", flexDirection: "column", gap: 40 }}>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={tituloFiltro}>Categoria</span>
+      <section className="px-(--margem) pt-0 pb-28 flex flex-wrap items-start gap-y-12 gap-x-16">
+        <aside aria-label="Filtros" className="flex-[0_0_240px] flex flex-col gap-10">
+          <div className="flex flex-col">
+            <span className={tituloFiltro}>Categoria</span>
             {[{ slug: undefined, nome: "Todas", total: produtos.length }, ...categorias].map((c) => {
               const atual = c.slug === filtros.categoria;
               return (
@@ -139,27 +114,16 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/catalogo">, "searchPa
                   key={c.nome}
                   href={endereco({ ...filtros, categoria: c.slug })}
                   aria-current={atual ? "true" : undefined}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    gap: 16,
-                    padding: "10px 0",
-                    borderBottom: "1px solid var(--border)",
-                    textDecoration: "none",
-                    fontSize: 16,
-                    lineHeight: "24px",
-                    color: "var(--text)",
-                    fontWeight: atual ? 600 : 400,
-                  }}
+                  className={`flex justify-between gap-4 border-b border-b-border px-0 py-2.5 text-[16px] leading-6 text-text no-underline ${atual ? "font-semibold" : "font-normal"}`}
                 >
                   <span>{c.nome}</span>
-                  <span style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 500 }}>{c.total}</span>
+                  <span className="text-[13px] text-text-muted font-medium">{c.total}</span>
                 </Link>
               );
             })}
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <span style={tituloFiltro}>Moto</span>
+          <div className="flex flex-col gap-3">
+            <span className={tituloFiltro}>Moto</span>
             {motos.map((moto) => {
               const marcada = filtros.motos.includes(moto.slug);
               const outras = filtros.motos.filter((m) => m !== moto.slug);
@@ -168,19 +132,16 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/catalogo">, "searchPa
                   key={moto.slug}
                   href={endereco({ ...filtros, motos: marcada ? outras : [...outras, moto.slug] })}
                   aria-current={marcada ? "true" : undefined}
-                  className={marcada ? "mk-check is-checked" : "mk-check"}
-                  style={{ color: "var(--text)", textDecoration: "none" }}
+                  className={`${classesMarcacao} no-underline`}
                 >
-                  <span className="mk-check__box">
-                    <Icone nome="check" />
-                  </span>
+                  <CaixaMarcacao marcada={marcada} />
                   {moto.nome}
                 </Link>
               );
             })}
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <span style={tituloFiltro}>Ano da moto</span>
+          <div className="flex flex-col gap-3">
+            <span className={tituloFiltro}>Ano da moto</span>
             <SeletorQueEnvia
               acao="/catalogo"
               nome="ano"
@@ -188,91 +149,73 @@ async function Conteudo({ searchParams }: Pick<PageProps<"/catalogo">, "searchPa
               valor={filtros.ano ? String(filtros.ano) : ""}
               opcoes={[{ valor: "", texto: "Todos os anos" }, ...Array.from({ length: anoAtual - 1979 }, (_, i) => ({ valor: String(anoAtual - i), texto: String(anoAtual - i) }))]}
               ocultos={outrosFiltros}
-              className="st-seletor"
-              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 44, padding: "0 14px", border: "1.5px solid var(--border-strong)", borderRadius: 4, fontSize: 16, lineHeight: "24px" }}
+              className={`${focoNaCaixa} flex h-11 items-center justify-between rounded-md border-[1.5px] border-border-strong px-3.5 py-0 text-[16px] leading-6`}
             />
-            <span style={{ fontSize: 13, lineHeight: "20px", color: "var(--text-muted)" }}>Mostra só as peças que servem no ano escolhido.</span>
+            <span className="text-[13px] leading-5 text-text-muted">Mostra só as peças que servem no ano escolhido.</span>
           </div>
           {conteudo.catalogoPdf && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: 20, background: "var(--bg-subtle)", borderRadius: 8 }}>
-              <span style={{ fontWeight: 600, fontSize: 15, lineHeight: "22px" }}>Catálogo completo</span>
-              <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-secondary)" }}>Todas as peças, códigos e aplicações num arquivo só.</span>
-              <a className="mk-btn mk-btn--secondary" href={conteudo.catalogoPdf} style={{ alignSelf: "flex-start" }}>
+            <div className="flex flex-col gap-3 p-5 bg-bg-subtle rounded-lg">
+              <span className="font-semibold text-[15px] leading-[22px]">Catálogo completo</span>
+              <span className="text-[14px] leading-5 text-text-secondary">Todas as peças, códigos e aplicações num arquivo só.</span>
+              <Botao variante="secundario" href={conteudo.catalogoPdf} className="self-start">
                 <Icone nome="download" /> Baixar PDF
-              </a>
+              </Botao>
             </div>
           )}
         </aside>
 
-        <div style={{ flex: "1 1 640px", minWidth: 0, display: "flex", flexDirection: "column", gap: 32 }}>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "16px 24px",
-              paddingBottom: 16,
-              borderBottom: "1px solid var(--border)",
-            }}
-          >
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
-              <span style={{ fontWeight: 600, fontSize: 16, lineHeight: "24px" }}>
+        <div className="flex-[1_1_640px] min-w-0 flex flex-col gap-8">
+          <div className="flex flex-wrap items-center justify-between gap-y-4 gap-x-6 pb-4 border-b border-b-border">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="font-semibold text-[16px] leading-6">
                 {encontrados.length} {encontrados.length === 1 ? "peça" : "peças"}
               </span>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, lineHeight: "20px", color: "var(--text-secondary)" }}>
+            <div className="flex items-center gap-2 text-[14px] leading-5 text-text-secondary">
               Ordenar:{" "}
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontWeight: 600, color: "var(--text)" }}>
+              <span className="inline-flex items-center gap-1.5 font-semibold text-text">
                 Mais recentes <Icone nome="chevron-down" />
               </span>
             </div>
           </div>
 
           {naPagina.length ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "48px 32px" }}>
+            <div className="grid [grid-template-columns:repeat(auto-fill,_minmax(260px,_1fr))] gap-y-12 gap-x-8">
               {naPagina.map((p) => (
                 <CartaoProduto key={p.slug} produto={p} serveEm titulo="h2" />
               ))}
             </div>
           ) : (
-            <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)" }}>
+            <p className="m-0 text-[17px] leading-7 text-text-secondary">
               Nenhuma peça encontrada com esses filtros. <Link href="/catalogo">Ver todas as peças</Link>
             </p>
           )}
 
           <nav
             aria-label="Páginas"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 16,
-              paddingTop: 24,
-              borderTop: "1.5px solid var(--text)",
-            }}
+            className="flex items-center justify-between gap-4 pt-6 border-t-[1.5px] border-t-text"
           >
-            <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+            <span className="text-[14px] leading-5 text-text-muted">
               Página {pagina} de {paginas}
             </span>
-            <div style={{ display: "flex", gap: 12 }}>
+            <div className="flex gap-3">
               {pagina > 1 ? (
-                <Link className="mk-btn mk-btn--secondary" href={endereco(filtros, pagina - 1)}>
+                <Botao variante="secundario" href={endereco(filtros, pagina - 1)}>
                   Anterior
-                </Link>
+                </Botao>
               ) : (
-                <a className="mk-btn mk-btn--secondary" aria-disabled="true" style={{ opacity: 0.45 }}>
+                <Botao variante="secundario" apagado>
                   Anterior
-                </a>
+                </Botao>
               )}
               {pagina < paginas ? (
-                <Link className="mk-btn mk-btn--dark" href={endereco(filtros, pagina + 1)}>
+                <Botao variante="escuro" href={endereco(filtros, pagina + 1)}>
                   Próxima <Icone nome="arrow-right" />
-                </Link>
+                </Botao>
               ) : (
-                <a className="mk-btn mk-btn--dark" aria-disabled="true" style={{ opacity: 0.45 }}>
+                <Botao variante="escuro" apagado>
                   Próxima <Icone nome="arrow-right" />
-                </a>
+                </Botao>
               )}
             </div>
           </nav>

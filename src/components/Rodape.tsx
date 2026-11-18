@@ -1,29 +1,19 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { LinkWhatsApp } from "@/components/LinkWhatsApp";
+import { Logo } from "@/components/Logo";
 import { obterConteudo } from "@/lib/conteudo";
 import { listarCategorias } from "@/lib/produtos";
 
-const titulo = {
-  margin: 0,
-  fontWeight: 600,
-  fontSize: 12,
-  lineHeight: "16px",
-  letterSpacing: ".2em",
-  textTransform: "uppercase",
-  color: "var(--text-muted)",
-  paddingBottom: 8,
-} as const;
-// inline-block: dentro do <li> o link é inline e ignoraria o padding vertical (antes era item de flex).
-const link = { display: "inline-block", fontSize: 15, lineHeight: "24px", color: "var(--text)", textDecoration: "none", padding: "4px 0" };
-const coluna = { display: "flex", flexDirection: "column", gap: 4 } as const;
+// inline-block: dentro do <li> o link é inline e ignoraria o padding vertical.
+const link = "inline-block py-1 text-[15px] leading-6 text-text no-underline";
 
 // Título da coluna + lista de links: o leitor de tela anuncia "Catálogo, lista, 4 itens".
-function Coluna({ titulo: nome, children }: { titulo: string; children: ReactNode }) {
+function Coluna({ titulo, children }: { titulo: string; children: ReactNode }) {
   return (
-    <div style={coluna}>
-      <h2 style={titulo}>{nome}</h2>
-      <ul style={{ ...coluna, listStyle: "none", margin: 0, padding: 0 }}>{children}</ul>
+    <div className="flex flex-col gap-1">
+      <h2 className="m-0 pb-2 text-[12px] leading-4 font-semibold tracking-[.2em] text-text-muted uppercase">{titulo}</h2>
+      <ul className="m-0 flex list-none flex-col gap-1 p-0">{children}</ul>
     </div>
   );
 }
@@ -31,29 +21,19 @@ function Coluna({ titulo: nome, children }: { titulo: string; children: ReactNod
 export async function Rodape() {
   const [categorias, conteudo] = await Promise.all([listarCategorias(), obterConteudo()]);
   return (
-    <footer
-      style={{
-        padding: "64px var(--margem) 40px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 48,
-        borderTop: "1.5px solid var(--text)",
-      }}
-    >
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 40 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 320 }}>
-          <span className="mk-logo">
-            Moto<b>Koi</b>
-          </span>
-          <p style={{ margin: 0, fontSize: 15, lineHeight: "24px", color: "var(--text-secondary)" }}>
+    <footer className="flex flex-col gap-12 border-t-[1.5px] border-text px-(--margem) pt-16 pb-10">
+      <div className="flex flex-wrap justify-between gap-10">
+        <div className="flex max-w-80 flex-col gap-3">
+          <Logo />
+          <p className="m-0 text-[15px] leading-6 text-text-secondary">
             Peças importadas para motocicletas. Qualidade, durabilidade e segurança.
           </p>
         </div>
-        <nav aria-label="Rodapé" style={{ display: "flex", flexWrap: "wrap", gap: "32px 72px" }}>
+        <nav aria-label="Rodapé" className="flex flex-wrap gap-x-18 gap-y-8">
           <Coluna titulo="Catálogo">
             {categorias.slice(0, 4).map((c) => (
               <li key={c.slug}>
-                <Link href={`/catalogo?categoria=${c.slug}`} style={link}>
+                <Link href={`/catalogo?categoria=${c.slug}`} className={link}>
                   {c.nome}
                 </Link>
               </li>
@@ -61,28 +41,28 @@ export async function Rodape() {
           </Coluna>
           <Coluna titulo="MotoKoi">
             <li>
-              <Link href="/a-marca" style={link}>
+              <Link href="/a-marca" className={link}>
                 A marca
               </Link>
             </li>
             <li>
-              <Link href="/onde-comprar" style={link}>
+              <Link href="/onde-comprar" className={link}>
                 Onde comprar
               </Link>
             </li>
             <li>
-              <Link href="/seja-revendedor" style={link}>
+              <Link href="/seja-revendedor" className={link}>
                 Seja revendedor
               </Link>
             </li>
             <li>
-              <Link href="/garantia" style={link}>
+              <Link href="/garantia" className={link}>
                 Garantia
               </Link>
             </li>
             {conteudo.catalogoPdf && (
               <li>
-                <a href={conteudo.catalogoPdf} style={link}>
+                <a href={conteudo.catalogoPdf} className={link}>
                   Catálogo em PDF
                 </a>
               </li>
@@ -90,36 +70,24 @@ export async function Rodape() {
           </Coluna>
           <Coluna titulo="Contato">
             <li>
-              <LinkWhatsApp whatsapp={conteudo.whatsapp} style={link}>
+              <LinkWhatsApp whatsapp={conteudo.whatsapp} className={link}>
                 WhatsApp {conteudo.whatsapp?.numero ?? "[NÚMERO]"}
               </LinkWhatsApp>
             </li>
             <li>
-              <a href="https://www.instagram.com/moto.koi/" style={link}>
+              <a href="https://www.instagram.com/moto.koi/" className={link}>
                 Instagram @moto.koi
               </a>
             </li>
           </Coluna>
         </nav>
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          gap: "8px 24px",
-          paddingTop: 24,
-          borderTop: "1px solid var(--border)",
-          fontSize: 13,
-          lineHeight: "20px",
-          color: "var(--text-muted)",
-        }}
-      >
+      <div className="flex flex-wrap justify-between gap-x-6 gap-y-2 border-t border-border pt-6 text-[13px] leading-5 text-text-muted">
         <span>© 2026 MotoKoi. Todos os direitos reservados.</span>
-        <Link href="/privacidade" style={{ color: "var(--text-muted)" }}>
+        <Link href="/privacidade" className="text-text-muted">
           Política de privacidade
         </Link>
-        <a href="https://www.macatacado.com.br/" style={{ color: "var(--text-muted)" }}>
+        <a href="https://www.macatacado.com.br/" className="text-text-muted">
           Também à venda na Mac Atacado
         </a>
       </div>

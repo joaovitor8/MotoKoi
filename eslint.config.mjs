@@ -10,6 +10,7 @@ const eslintConfig = defineConfig([
     // Default ignores of eslint-config-next:
     ".next/**",
     "referencias/**", // material de referência, não é código do site
+    ".playwright-mcp/**", // capturas e scripts de comparação visual (temporários)
     "out/**",
     "build/**",
     "next-env.d.ts",

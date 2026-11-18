@@ -5,23 +5,16 @@ import { useActionState, type ReactNode } from "react";
 import { Icone } from "@/components/Icone";
 import { TIPOS_NEGOCIO } from "@/lib/revenda";
 import { enviarCadastro, type EstadoEnvio } from "./acoes";
+import { Botao } from "@/components/Botao";
+import { Campo as CampoBase, classesControle } from "@/components/Campo";
+import { Marcacao } from "@/components/Marcacao";
 
-const caixa = {
-  flex: "1 1 560px",
-  minWidth: 0,
-  padding: 40,
-  border: "1.5px solid var(--text)",
-  borderRadius: 8,
-  boxSizing: "border-box",
-} as const;
-
+// `largo`: o campo ocupa a linha inteira do formulário.
 function Campo({ rotulo, ajuda, largo, children }: { rotulo: string; ajuda?: string; largo?: boolean; children: ReactNode }) {
   return (
-    <label className="mk-field" style={{ width: "auto", flex: largo ? "1 1 100%" : "1 1 280px", minWidth: 0 }}>
-      <span className="mk-field__label">{rotulo}</span>
+    <CampoBase rotulo={rotulo} ajuda={ajuda} className={`min-w-0 ${largo ? "flex-[1_1_100%]" : "flex-[1_1_280px]"}`}>
       {children}
-      {ajuda && <span className="mk-field__help">{ajuda}</span>}
-    </label>
+    </CampoBase>
   );
 }
 
@@ -32,14 +25,14 @@ export function FormularioRevenda() {
 
   if (estado.enviado) {
     return (
-      <div role="status" style={{ ...caixa, display: "flex", flexDirection: "column", gap: 16 }}>
-        <span style={{ fontSize: 40, color: "var(--brand)" }}>
+      <div role="status" className="flex-[1_1_560px] min-w-0 p-10 border-[1.5px] border-text rounded-lg box-border flex flex-col gap-4">
+        <span className="text-[40px] text-brand">
           <Icone nome="check" />
         </span>
-        <h3 style={{ margin: 0, fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 32, lineHeight: "34px", textTransform: "uppercase" }}>
+        <h3 className="m-0 font-display font-bold text-[32px] leading-[34px] uppercase">
           Cadastro enviado
         </h3>
-        <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)" }}>
+        <p className="m-0 text-[17px] leading-7 text-text-secondary">
           Recebemos os dados da sua loja. Nossa equipe responde em cerca de 48 horas.
         </p>
       </div>
@@ -47,21 +40,21 @@ export function FormularioRevenda() {
   }
 
   return (
-    <form action={enviar} style={{ ...caixa, display: "flex", flexWrap: "wrap", gap: "20px 24px" }}>
+    <form action={enviar} className="flex-[1_1_560px] min-w-0 p-10 border-[1.5px] border-text rounded-lg box-border flex flex-wrap gap-y-5 gap-x-6">
       <Campo rotulo="Nome da loja ou oficina" largo>
-        <span className="mk-field__control">
-          <input name="loja" type="text" required maxLength={120} defaultValue={v.loja} placeholder="Ex.: Moto Peças Central" style={{ minWidth: 0 }} />
+        <span className={classesControle}>
+          <input name="loja" type="text" required maxLength={120} defaultValue={v.loja} placeholder="Ex.: Moto Peças Central" className="min-w-0" />
         </span>
       </Campo>
       <Campo rotulo="CNPJ" ajuda="Se ainda não tiver CNPJ, informe o CPF.">
-        <span className="mk-field__control">
-          <input name="documento" type="text" required maxLength={18} defaultValue={v.documento} placeholder="00.000.000/0000-00" style={{ minWidth: 0 }} />
+        <span className={classesControle}>
+          <input name="documento" type="text" required maxLength={18} defaultValue={v.documento} placeholder="00.000.000/0000-00" className="min-w-0" />
         </span>
       </Campo>
       <Campo rotulo="Tipo de negócio">
-        <span className="mk-field__control" style={{ justifyContent: "space-between" }}>
+        <span className={`${classesControle} justify-between`}>
           {/* key: sem ela o React não reaplica o defaultValue do select quando o formulário volta de um erro */}
-          <select key={v.tipo} name="tipo" defaultValue={v.tipo} style={{ all: "unset", flex: 1, minWidth: 0, fontSize: 16, lineHeight: "24px" }}>
+          <select key={v.tipo} name="tipo" defaultValue={v.tipo} className="[all:unset] flex-1! min-w-0! text-[16px]! leading-6!">
             {Object.entries(TIPOS_NEGOCIO).map(([valor, nome]) => (
               <option key={valor} value={valor}>
                 {nome}
@@ -72,23 +65,23 @@ export function FormularioRevenda() {
         </span>
       </Campo>
       <Campo rotulo="Seu nome">
-        <span className="mk-field__control">
-          <input name="responsavel" type="text" required maxLength={120} defaultValue={v.responsavel} placeholder="Nome e sobrenome" style={{ minWidth: 0 }} />
+        <span className={classesControle}>
+          <input name="responsavel" type="text" required maxLength={120} defaultValue={v.responsavel} placeholder="Nome e sobrenome" className="min-w-0" />
         </span>
       </Campo>
       <Campo rotulo="WhatsApp">
-        <span className="mk-field__control">
-          <input name="whatsapp" type="tel" required maxLength={20} defaultValue={v.whatsapp} placeholder="(00) 00000-0000" style={{ minWidth: 0 }} />
+        <span className={classesControle}>
+          <input name="whatsapp" type="tel" required maxLength={20} defaultValue={v.whatsapp} placeholder="(00) 00000-0000" className="min-w-0" />
         </span>
       </Campo>
       <Campo rotulo="E-mail">
-        <span className="mk-field__control">
-          <input name="email" type="email" required maxLength={160} defaultValue={v.email} placeholder="voce@loja.com.br" style={{ minWidth: 0 }} />
+        <span className={classesControle}>
+          <input name="email" type="email" required maxLength={160} defaultValue={v.email} placeholder="voce@loja.com.br" className="min-w-0" />
         </span>
       </Campo>
       <Campo rotulo="Cidade e estado">
-        <span className="mk-field__control">
-          <input name="cidade" type="text" required maxLength={90} defaultValue={v.cidade} placeholder="Ex.: Araçatuba, SP" style={{ minWidth: 0 }} />
+        <span className={classesControle}>
+          <input name="cidade" type="text" required maxLength={90} defaultValue={v.cidade} placeholder="Ex.: Araçatuba, SP" className="min-w-0" />
         </span>
       </Campo>
       <Campo rotulo="Mensagem (opcional)" largo>
@@ -98,43 +91,29 @@ export function FormularioRevenda() {
           maxLength={2000}
           defaultValue={v.mensagem}
           placeholder="Conte quais peças mais saem na sua loja."
-          style={{
-            boxSizing: "border-box",
-            width: "100%",
-            padding: "12px 16px",
-            border: "1.5px solid var(--border-strong)",
-            borderRadius: 4,
-            background: "var(--bg)",
-            font: "400 16px/24px var(--font-sans)",
-            color: "var(--text)",
-            resize: "vertical",
-          }}
+          className="box-border w-full py-3 px-4 border-[1.5px] border-border-strong rounded-md bg-bg [font:400_16px/24px_var(--font-sans)] text-text [resize:vertical]"
         />
       </Campo>
       {/* Campo-isca contra spam (ver acoes.ts). Fica fora da tela e fora da navegação por teclado. */}
-      <input name="site" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999 }} />
-      <div style={{ flex: "1 1 100%" }}>
-        <label className="mk-check">
-          <input name="aceite" type="checkbox" required defaultChecked={v.aceite === "on"} />
-          <span className="mk-check__box">
-            <Icone nome="check" />
-          </span>
+      <input name="site" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px]" />
+      <div className="flex-[1_1_100%]">
+        <Marcacao name="aceite" required defaultChecked={v.aceite === "on"}>
           Aceito receber o contato da MotoKoi por WhatsApp e e-mail.
-        </label>
-        <p style={{ margin: "8px 0 0", fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+        </Marcacao>
+        <p className="mx-0 mt-2 mb-0 text-[14px] leading-5 text-text-muted">
           Usamos estes dados só para analisar o cadastro e falar com você. Veja a <Link href="/privacidade">Política de privacidade</Link>.
         </p>
       </div>
       {estado.erro && (
-        <p role="alert" style={{ flex: "1 1 100%", margin: 0, fontWeight: 600, fontSize: 15, lineHeight: "24px", color: "var(--text-danger)" }}>
+        <p role="alert" className="flex-[1_1_100%] m-0 font-semibold text-[15px] leading-6 text-text-danger">
           {estado.erro}
         </p>
       )}
-      <div style={{ flex: "1 1 100%", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 24px" }}>
-        <button type="submit" disabled={enviando} className="mk-btn mk-btn--primary mk-btn--lg" style={enviando ? { opacity: 0.6 } : undefined}>
+      <div className="flex-[1_1_100%] flex flex-wrap items-center gap-y-3 gap-x-6">
+        <Botao variante="primario" grande type="submit" disabled={enviando} className={enviando ? "opacity-60" : undefined}>
           {enviando ? "Enviando…" : "Enviar cadastro"} <Icone nome="arrow-right" />
-        </button>
-        <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>Resposta em cerca de 48 horas.</span>
+        </Botao>
+        <span className="text-[14px] leading-5 text-text-muted">Resposta em cerca de 48 horas.</span>
       </div>
     </form>
   );

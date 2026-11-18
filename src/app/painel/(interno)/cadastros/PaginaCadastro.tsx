@@ -2,6 +2,7 @@ import Link from "next/link";
 import { dataBR, equipe } from "@/lib/painel";
 import { CADASTROS, type Cadastro, type ChaveCadastro } from "./config";
 import { FormularioCadastro } from "./FormularioCadastro";
+import { cartao, tabela, tituloPainel } from "@/app/painel/estilos";
 
 type Registro = Record<string, unknown> & { id: number };
 
@@ -28,23 +29,23 @@ export async function PaginaCadastro({ chave, searchParams }: { chave: ChaveCada
   return (
     <>
       {cfg.voltarPara && (
-        <nav aria-label="Você está em" style={{ display: "flex", gap: 8, fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
-          <Link href={cfg.voltarPara} style={{ color: "var(--text-muted)" }}>
+        <nav aria-label="Você está em" className="flex gap-2 text-[14px] leading-5 text-text-muted">
+          <Link href={cfg.voltarPara} className="text-text-muted">
             Conteúdo do site
           </Link>
           <span aria-hidden="true">/</span>
-          <span style={{ color: "var(--text)" }}>{cfg.titulo}</span>
+          <span className="text-text">{cfg.titulo}</span>
         </nav>
       )}
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <h1 className="ad-h1">{cfg.titulo}</h1>
-        <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+      <div className="flex flex-col gap-1">
+        <h1 className={tituloPainel}>{cfg.titulo}</h1>
+        <span className="text-[14px] leading-5 text-text-muted">
           {registros.length} {registros.length === 1 ? "registro" : "registros"}. Clique num nome para editar.
         </span>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: 24 }}>
-        <div className="ad-card" style={{ flex: "2 1 520px", minWidth: 0, overflowX: "auto" }}>
-          <table className="ad-table">
+      <div className="flex flex-wrap items-start gap-6">
+        <div className={`${cartao} flex-[2_1_520px] min-w-0 overflow-x-auto`}>
+          <table className={tabela}>
             <thead>
               <tr>
                 {cfg.colunas.map((nome) => (
@@ -56,9 +57,9 @@ export async function PaginaCadastro({ chave, searchParams }: { chave: ChaveCada
               {registros.map((r) => (
                 <tr key={r.id} aria-selected={r.id === aberto?.id}>
                   {cfg.colunas.map((nome, i) => (
-                    <td key={nome} style={i === 0 ? undefined : { color: "var(--text-secondary)" }}>
+                    <td key={nome} className={i === 0 ? undefined : "text-text-secondary"}>
                       {i === 0 ? (
-                        <Link href={`/painel/${chave}?id=${r.id}`} style={{ fontWeight: 600, color: "var(--text)", textDecoration: "none" }}>
+                        <Link href={`/painel/${chave}?id=${r.id}`} className="font-semibold text-text no-underline">
                           {celula(r, nome)}
                         </Link>
                       ) : (
@@ -70,7 +71,7 @@ export async function PaginaCadastro({ chave, searchParams }: { chave: ChaveCada
               ))}
               {registros.length === 0 && (
                 <tr>
-                  <td colSpan={cfg.colunas.length} style={{ color: "var(--text-secondary)" }}>
+                  <td colSpan={cfg.colunas.length} className="text-text-secondary">
                     Nada cadastrado ainda. Use o formulário ao lado.
                   </td>
                 </tr>

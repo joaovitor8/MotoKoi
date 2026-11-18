@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Cabecalho } from "@/components/Cabecalho";
 import { EspacoFoto } from "@/components/EspacoFoto";
 import { Icone } from "@/components/Icone";
 import { Ondas } from "@/components/Ondas";
 import { obterConteudo } from "@/lib/conteudo";
 import { listarProdutos } from "@/lib/produtos";
+import { Botao } from "@/components/Botao";
+import { rotulo, tituloH1, tituloH2 } from "@/components/estilos";
 
 export const metadata: Metadata = { title: "A marca" };
 
@@ -15,9 +16,6 @@ const valores = [
   { titulo: "Durabilidade", texto: "Feita para a moto que roda todo dia." },
 ];
 
-const tituloBloco = { display: "flex", flexDirection: "column", gap: 16 } as const;
-const paragrafo = { margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)" };
-
 export default async function AMarca() {
   const [conteudo, produtos] = await Promise.all([obterConteudo(), listarProdutos()]);
   // Selo do Inmetro: só com registro cadastrado em algum produto publicado.
@@ -26,117 +24,82 @@ export default async function AMarca() {
     <>
       <Cabecalho atual="/a-marca" />
       <main>
-        <section style={{ padding: "72px var(--margem) 96px", display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: "40px 72px" }}>
-          <div style={{ flex: "1 1 560px", minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
-            <span className="st-rotulo">A marca</span>
-            <h1 className="st-h1">
+        <section className="px-(--margem) pt-18 pb-24 flex flex-wrap items-end gap-y-10 gap-x-18">
+          <div className="flex-[1_1_560px] min-w-0 flex flex-col gap-5">
+            <span className={rotulo}>A marca</span>
+            <h1 className={tituloH1}>
               Contra a
               <br />
-              <span style={{ color: "var(--brand)" }}>correnteza</span>
+              <span className="text-brand">correnteza</span>
             </h1>
           </div>
-          <p style={{ margin: 0, fontSize: 20, lineHeight: "32px", color: "var(--text-secondary)", flex: "1 1 380px", maxWidth: 520 }}>
+          <p className="m-0 text-[20px] leading-8 text-text-secondary flex-[1_1_380px] max-w-130">
             O koi é conhecido por nadar rio acima, sem parar. É a ideia por trás de cada peça MotoKoi: resistir ao uso de
             todo dia.
           </p>
         </section>
 
-        <section style={{ padding: "0 var(--margem) 112px" }}>
+        <section className="px-(--margem) pt-0 pb-28">
           <EspacoFoto texto="[FOTO: as peças e as caixas MotoKoi, em fundo claro]" proporcao="21 / 9" icone={64} />
         </section>
 
-        <section style={{ padding: "0 var(--margem) 112px", display: "flex", flexWrap: "wrap", gap: "40px 72px" }}>
-          <div style={{ ...tituloBloco, flex: "1 1 360px", minWidth: 0 }}>
-            <span className="st-rotulo">Nossa história</span>
-            <h2 className="st-h2">
+        <section className="px-(--margem) pt-0 pb-28 flex flex-wrap gap-y-10 gap-x-18">
+          <div className="flex flex-col gap-4 flex-[1_1_360px] min-w-0">
+            <span className={rotulo}>Nossa história</span>
+            <h2 className={tituloH2}>
               De onde
               <br />
               viemos
             </h2>
           </div>
-          <div
-            style={{
-              flex: "1 1 520px",
-              minWidth: 0,
-              display: "flex",
-              flexDirection: "column",
-              gap: 20,
-              paddingTop: 24,
-              borderTop: "1.5px solid var(--text)",
-            }}
-          >
-            <p style={{ margin: 0, fontSize: 20, lineHeight: "32px", color: "var(--text-secondary)" }}>
+          <div className="flex-[1_1_520px] min-w-0 flex flex-col gap-5 pt-6 border-t-[1.5px] border-t-text">
+            <p className="m-0 text-[20px] leading-8 text-text-secondary">
               A MotoKoi nasceu em 2018, em Araçatuba, SP, dentro da Mac Atacado. Os lojistas pediam peças de reposição com
               preço justo e que durassem, e a resposta foi criar uma marca própria, começando pelo kit transmissão. (EX)
             </p>
-            <p style={paragrafo}>Depois vieram os cabos, os carburadores, os discos de embreagem, as câmaras de ar e as capas de chuva. Hoje a linha chega a lojas e oficinas de cinco estados. (EX)</p>
+            <p className="m-0 text-[17px] leading-7 text-text-secondary">Depois vieram os cabos, os carburadores, os discos de embreagem, as câmaras de ar e as capas de chuva. Hoje a linha chega a lojas e oficinas de cinco estados. (EX)</p>
           </div>
         </section>
 
-        <section
-          style={{
-            background: "var(--bg-subtle)",
-            padding: "112px var(--margem)",
-            display: "flex",
-            flexDirection: "column",
-            gap: 56,
-          }}
-        >
-          <div style={tituloBloco}>
-            <span className="st-rotulo">O que está na caixa</span>
-            <h2 className="st-h2">
+        <section className="bg-bg-subtle py-28 px-(--margem) flex flex-col gap-14">
+          <div className="flex flex-col gap-4">
+            <span className={rotulo}>O que está na caixa</span>
+            <h2 className={tituloH2}>
               Feita para
               <br />
               aguentar
             </h2>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 40 }}>
+          <div className="flex flex-wrap gap-10">
             {valores.map((v) => (
               <div
                 key={v.titulo}
-                style={{
-                  flex: "1 1 280px",
-                  minWidth: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 16,
-                  paddingTop: 24,
-                  borderTop: "1.5px solid var(--text)",
-                }}
+                className="flex-[1_1_280px] min-w-0 flex flex-col gap-4 pt-6 border-t-[1.5px] border-t-text"
               >
-                <h3
-                  style={{
-                    margin: 0,
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 800,
-                    fontSize: "clamp(40px, 4.4vw, 64px)",
-                    lineHeight: 0.95,
-                    textTransform: "uppercase",
-                  }}
-                >
+                <h3 className="m-0 font-display font-extrabold [font-size:clamp(40px,_4.4vw,_64px)] leading-[0.95] uppercase">
                   {v.titulo}
                 </h3>
-                <p style={{ ...paragrafo, maxWidth: 360 }}>{v.texto}</p>
+                <p className="m-0 text-[17px] leading-7 text-text-secondary max-w-90">{v.texto}</p>
               </div>
             ))}
           </div>
         </section>
 
-        <section style={{ padding: "112px var(--margem)", display: "flex", flexDirection: "column", gap: 40 }}>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: "16px 48px" }}>
-            <div style={tituloBloco}>
-              <span className="st-rotulo">Qualidade que dá para conferir</span>
-              <h2 className="st-h2">
+        <section className="py-28 px-(--margem) flex flex-col gap-10">
+          <div className="flex flex-wrap items-end justify-between gap-y-4 gap-x-12">
+            <div className="flex flex-col gap-4">
+              <span className={rotulo}>Qualidade que dá para conferir</span>
+              <h2 className={tituloH2}>
                 O que garante
                 <br />
                 cada peça
               </h2>
             </div>
-            <Link className="mk-btn mk-btn--secondary" href="/garantia">
+            <Botao variante="secundario" href="/garantia">
               Ver a garantia <Icone nome="arrow-right" />
-            </Link>
+            </Botao>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 32 }}>
+          <div className="flex flex-wrap gap-8">
             {[
               { titulo: `Garantia de ${conteudo.garantiaMeses ?? "[N]"} meses`, texto: "Contra defeito de fabricação, acionada pela loja onde a peça foi comprada." },
               {
@@ -148,36 +111,28 @@ export default async function AMarca() {
               { titulo: "Código original", texto: "Cada peça indica o código da montadora equivalente." },
               { titulo: "Aço 1045", texto: "Coroa e pinhão do kit transmissão em aço de médio carbono." },
             ].map((g) => (
-              <div key={g.titulo} style={{ flex: "1 1 240px", minWidth: 0, display: "flex", flexDirection: "column", gap: 8, paddingTop: 20, borderTop: "1.5px solid var(--text)" }}>
-                <b style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 26, lineHeight: "28px", textTransform: "uppercase" }}>{g.titulo}</b>
-                <span style={{ fontSize: 15, lineHeight: "24px", color: "var(--text-secondary)" }}>{g.texto}</span>
+              <div key={g.titulo} className="flex-[1_1_240px] min-w-0 flex flex-col gap-2 pt-5 border-t-[1.5px] border-t-text">
+                <b className="font-display font-bold text-[26px] leading-7 uppercase">{g.titulo}</b>
+                <span className="text-[15px] leading-6 text-text-secondary">{g.texto}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section
-          style={{
-            position: "relative",
-            overflow: "hidden",
-            background: "var(--brand)",
-            color: "var(--text-on-brand)",
-            padding: "96px var(--margem)",
-          }}
-        >
+        <section className="relative overflow-hidden bg-brand text-text-on-brand py-24 px-(--margem)">
           <Ondas />
-          <div style={{ position: "relative", display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: "32px 64px" }}>
-            <h2 className="st-h2">
+          <div className="relative flex flex-wrap items-end justify-between gap-y-8 gap-x-16">
+            <h2 className={tituloH2}>
               Conheça
               <br />a linha
             </h2>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-              <Link className="mk-btn mk-btn--dark mk-btn--lg" href="/catalogo">
+            <div className="flex flex-wrap gap-3">
+              <Botao variante="escuro" grande href="/catalogo">
                 Ver o catálogo <Icone nome="arrow-right" />
-              </Link>
-              <Link className="mk-btn mk-btn--inverse mk-btn--lg" href="/seja-revendedor">
+              </Botao>
+              <Botao variante="inverso" grande href="/seja-revendedor">
                 Seja revendedor
-              </Link>
+              </Botao>
             </div>
           </div>
         </section>

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Barlow, Barlow_Condensed } from "next/font/google";
 import type { CSSProperties } from "react";
-import "./motokoi.css";
-import "./site.css";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: "MotoKoi", template: "MotoKoi — %s" },
@@ -14,7 +13,7 @@ export const metadata: Metadata = {
 const barlow = Barlow({ weight: ["400", "500", "600"], subsets: ["latin"], display: "swap" });
 const barlowCondensed = Barlow_Condensed({ weight: ["600", "700", "800"], subsets: ["latin"], display: "swap" });
 
-// As variáveis de motokoi.css apontam para "Barlow" pelo nome; aqui passam a apontar para as fontes do next/font.
+// As variáveis --font-sans e --font-display (globals.css) apontam para "Barlow" pelo nome; aqui passam a apontar para as fontes do next/font.
 const fontes = {
   "--font-sans": `${barlow.style.fontFamily}, system-ui, sans-serif`,
   "--font-display": `${barlowCondensed.style.fontFamily}, "Arial Narrow", sans-serif`,

@@ -10,7 +10,7 @@ export function Galeria({ fotos }: { fotos: { url: string; alt: string }[] }) {
     <>
       <FotoProduto foto={fotos[atual]} proporcao="1 / 1" tamanhos="(max-width: 900px) 100vw, 660px" />
       {fotos.length > 1 && (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
+        <div className="flex flex-wrap gap-4">
           {fotos.map((foto, i) => (
             <button
               key={foto.url}
@@ -18,16 +18,7 @@ export function Galeria({ fotos }: { fotos: { url: string; alt: string }[] }) {
               aria-label={`Foto ${i + 1}`}
               aria-pressed={i === atual}
               onClick={() => setAtual(i)}
-              style={{
-                flex: "0 0 calc((100% - 48px) / 4)",
-                minWidth: 0,
-                padding: 0,
-                border: i === atual ? "2px solid var(--text)" : "1px solid var(--border)",
-                borderRadius: 8,
-                background: "none",
-                cursor: "pointer",
-                overflow: "hidden",
-              }}
+              className={`min-w-0 flex-[0_0_calc((100%_-_48px)_/_4)] cursor-pointer overflow-hidden rounded-lg p-0 [background:none] ${i === atual ? "border-2 border-text" : "border border-border"}`}
             >
               <FotoProduto foto={{ url: foto.url, alt: "" }} proporcao="1 / 1" tamanhos="160px" style={{ borderRadius: 0 }} />
             </button>

@@ -4,24 +4,14 @@ import Link from "next/link";
 import { useState } from "react";
 import { Icone } from "@/components/Icone";
 import type { Moto } from "@/lib/produtos";
+import { Botao } from "@/components/Botao";
+import { focoNaCaixa } from "@/components/estilos";
 
-const rotulo = { fontWeight: 600, fontSize: 12, lineHeight: "16px", letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-muted)" } as const;
-const caixa = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: 8,
-  height: 48,
-  padding: "0 14px",
-  boxSizing: "border-box",
-  border: "1.5px solid var(--border-strong)",
-  borderRadius: 4,
-  fontSize: 16,
-  lineHeight: "24px",
-  color: "var(--text)",
-} as const;
-const seletor = { all: "unset", flex: 1, minWidth: 0 } as const;
-const maisBuscada = { fontWeight: 600, color: "var(--text)", textDecoration: "underline", textUnderlineOffset: 3 } as const;
+const rotulo = "font-semibold text-[12px] leading-4 tracking-[.08em] uppercase text-text-muted";
+const caixa = "flex items-center justify-between gap-2 h-12 py-0 px-3.5 box-border border-[1.5px] border-border-strong rounded-md text-[16px] leading-6 text-text";
+// "!": vence o all: unset, que no CSS do Tailwind vem depois.
+const seletor = "[all:unset] flex-1! min-w-0!";
+const maisBuscada = "font-semibold text-text underline [text-underline-offset:3px]";
 
 // Busca do topo da Home. Envia para o catálogo como ?moto=<slug>&ano=<ano>.
 // É componente de navegador só porque a lista de modelos depende da marca escolhida.
@@ -34,14 +24,14 @@ export function BuscaPorMoto({ motos, anoAtual }: { motos: Moto[]; anoAtual: num
       action="/catalogo"
       role="search"
       aria-label="Buscar peças pela moto"
-      style={{ display: "flex", flexDirection: "column", gap: 14, maxWidth: 620, padding: 20, border: "1.5px solid var(--text)", borderRadius: 8, background: "var(--bg)" }}
+      className="flex flex-col gap-3.5 max-w-155 p-5 border-[1.5px] border-text rounded-lg bg-bg"
     >
-      <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 26, lineHeight: "28px", textTransform: "uppercase" }}>Qual é a sua moto?</span>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-        <label style={{ flex: "1 1 130px", minWidth: 0, display: "flex", flexDirection: "column", gap: 4 }}>
-          <span style={rotulo}>Marca</span>
-          <span className="st-seletor" style={caixa}>
-            <select value={marca} onChange={(e) => setMarca(e.target.value)} style={seletor}>
+      <span className="font-display font-bold text-[26px] leading-7 uppercase">Qual é a sua moto?</span>
+      <div className="flex flex-wrap gap-2.5">
+        <label className="flex-[1_1_130px] min-w-0 flex flex-col gap-1">
+          <span className={rotulo}>Marca</span>
+          <span className={`${focoNaCaixa} ${caixa}`}>
+            <select value={marca} onChange={(e) => setMarca(e.target.value)} className={seletor}>
               {marcas.map((m) => (
                 <option key={m}>{m}</option>
               ))}
@@ -49,11 +39,11 @@ export function BuscaPorMoto({ motos, anoAtual }: { motos: Moto[]; anoAtual: num
             <Icone nome="chevron-down" />
           </span>
         </label>
-        <label style={{ flex: "2 1 190px", minWidth: 0, display: "flex", flexDirection: "column", gap: 4 }}>
-          <span style={rotulo}>Modelo</span>
-          <span className="st-seletor" style={caixa}>
+        <label className="flex-[2_1_190px] min-w-0 flex flex-col gap-1">
+          <span className={rotulo}>Modelo</span>
+          <span className={`${focoNaCaixa} ${caixa}`}>
             {/* key: ao trocar a marca, o seletor recomeça no primeiro modelo dela */}
-            <select key={marca} name="moto" style={seletor}>
+            <select key={marca} name="moto" className={seletor}>
               {motos
                 .filter((m) => m.fabricante === marca)
                 .map((m) => (
@@ -65,10 +55,10 @@ export function BuscaPorMoto({ motos, anoAtual }: { motos: Moto[]; anoAtual: num
             <Icone nome="chevron-down" />
           </span>
         </label>
-        <label style={{ flex: "1 1 110px", minWidth: 0, display: "flex", flexDirection: "column", gap: 4 }}>
-          <span style={rotulo}>Ano</span>
-          <span className="st-seletor" style={caixa}>
-            <select name="ano" defaultValue="" style={seletor}>
+        <label className="flex-[1_1_110px] min-w-0 flex flex-col gap-1">
+          <span className={rotulo}>Ano</span>
+          <span className={`${focoNaCaixa} ${caixa}`}>
+            <select name="ano" defaultValue="" className={seletor}>
               <option value="">Todos</option>
               {Array.from({ length: anoAtual - 1979 }, (_, i) => anoAtual - i).map((ano) => (
                 <option key={ano}>{ano}</option>
@@ -77,18 +67,18 @@ export function BuscaPorMoto({ motos, anoAtual }: { motos: Moto[]; anoAtual: num
             <Icone nome="chevron-down" />
           </span>
         </label>
-        <button type="submit" className="mk-btn mk-btn--dark" style={{ flex: "1 1 150px", height: 48 }}>
+        <Botao variante="escuro" type="submit" className="h-12 flex-[1_1_150px]">
           Ver peças <Icone nome="arrow-right" />
-        </button>
+        </Botao>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "6px 16px", fontSize: 14, lineHeight: "20px", color: "var(--text-secondary)" }}>
+      <div className="flex flex-wrap items-center gap-y-1.5 gap-x-4 text-[14px] leading-5 text-text-secondary">
         <span>Mais buscadas:</span>
         {motos.slice(0, 5).map((m) => (
-          <Link key={m.slug} href={{ pathname: "/catalogo", query: { moto: m.slug } }} style={maisBuscada}>
+          <Link key={m.slug} href={{ pathname: "/catalogo", query: { moto: m.slug } }} className={maisBuscada}>
             {m.nome}
           </Link>
         ))}
-        <Link href="/catalogo" style={{ fontWeight: 600, marginLeft: "auto", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 4 }}>
+        <Link href="/catalogo" className="font-semibold ml-auto whitespace-nowrap inline-flex items-center gap-1">
           Buscar por código <Icone nome="arrow-right" />
         </Link>
       </div>

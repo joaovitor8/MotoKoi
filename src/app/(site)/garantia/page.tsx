@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Cabecalho } from "@/components/Cabecalho";
 import { Icone } from "@/components/Icone";
 import { obterConteudo } from "@/lib/conteudo";
+import { classesBotao } from "@/components/Botao";
+import { LinkWhatsApp } from "@/components/LinkWhatsApp";
+import { rotulo, tituloH1, tituloH2 } from "@/components/estilos";
 
 export const metadata: Metadata = { title: "Garantia" };
 
@@ -12,10 +15,8 @@ const cobre = [
   "Peça que chega com defeito dentro da caixa lacrada (EX)",
 ];
 const naoCobre = ["Desgaste natural pelo uso", "Instalação incorreta ou falta de manutenção", "Uso em competição ou em moto modificada (EX)"];
-
-const h2 = { margin: 0, fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 32, lineHeight: "34px", textTransform: "uppercase" } as const;
-const item = { display: "flex", gap: 14, padding: "14px 0", borderBottom: "1px solid var(--border)", fontSize: 16, lineHeight: "24px" } as const;
-const lista = { listStyle: "none", margin: 0, padding: 0, borderTop: "1.5px solid var(--text)" } as const;
+const item = "flex gap-3.5 py-3.5 px-0 border-b border-b-border text-[16px] leading-6";
+const lista = "list-none m-0 p-0 border-t-[1.5px] border-t-text";
 
 export default async function Garantia() {
   const conteudo = await obterConteudo();
@@ -30,27 +31,27 @@ export default async function Garantia() {
     <>
       <Cabecalho atual="/garantia" />
       <main>
-        <section style={{ padding: "72px var(--margem) 96px", display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: "40px 72px" }}>
-          <div style={{ flex: "1 1 520px", minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
-            <span className="st-rotulo">Garantia</span>
-            <h1 className="st-h1">
+        <section className="px-(--margem) pt-18 pb-24 flex flex-wrap items-end gap-y-10 gap-x-18">
+          <div className="flex-[1_1_520px] min-w-0 flex flex-col gap-5">
+            <span className={rotulo}>Garantia</span>
+            <h1 className={tituloH1}>
               {conteudo.garantiaMeses ?? "[N]"} meses
               <br />
               de garantia
             </h1>
           </div>
-          <p style={{ margin: 0, fontSize: 20, lineHeight: "32px", color: "var(--text-secondary)", flex: "1 1 380px", maxWidth: 520 }}>
+          <p className="m-0 text-[20px] leading-8 text-text-secondary flex-[1_1_380px] max-w-130">
             Toda peça MotoKoi tem garantia contra defeito de fabricação. Veja o que está coberto e como acionar.
           </p>
         </section>
 
-        <section style={{ padding: "0 var(--margem) 112px", display: "flex", flexWrap: "wrap", gap: "48px 72px" }}>
-          <div style={{ flex: "1 1 420px", minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
-            <h2 style={h2}>O que a garantia cobre</h2>
-            <ul style={lista}>
+        <section className="px-(--margem) pt-0 pb-28 flex flex-wrap gap-y-12 gap-x-18">
+          <div className="flex-[1_1_420px] min-w-0 flex flex-col gap-5">
+            <h2 className="m-0 font-display font-bold text-[32px] leading-[34px] uppercase">O que a garantia cobre</h2>
+            <ul className={lista}>
               {cobre.map((texto) => (
-                <li key={texto} style={item}>
-                  <span style={{ fontSize: 22, color: "var(--brand)" }}>
+                <li key={texto} className={item}>
+                  <span className="text-[22px] text-brand">
                     <Icone nome="check" />
                   </span>
                   {texto}
@@ -58,12 +59,12 @@ export default async function Garantia() {
               ))}
             </ul>
           </div>
-          <div style={{ flex: "1 1 420px", minWidth: 0, display: "flex", flexDirection: "column", gap: 20 }}>
-            <h2 style={h2}>O que não cobre</h2>
-            <ul style={lista}>
+          <div className="flex-[1_1_420px] min-w-0 flex flex-col gap-5">
+            <h2 className="m-0 font-display font-bold text-[32px] leading-[34px] uppercase">O que não cobre</h2>
+            <ul className={lista}>
               {naoCobre.map((texto) => (
-                <li key={texto} style={item}>
-                  <span style={{ fontSize: 22, color: "var(--text-muted)" }}>
+                <li key={texto} className={item}>
+                  <span className="text-[22px] text-text-muted">
                     <Icone nome="x" />
                   </span>
                   {texto}
@@ -71,37 +72,37 @@ export default async function Garantia() {
               ))}
             </ul>
           </div>
-          <p style={{ flex: "1 1 100%", margin: 0, fontSize: 14, lineHeight: "22px", color: "var(--text-muted)" }}>
+          <p className="flex-[1_1_100%] m-0 text-[14px] leading-[22px] text-text-muted">
             Itens sugeridos. Os termos finais da garantia devem vir do dono da MotoKoi.
           </p>
         </section>
 
-        <section style={{ background: "var(--bg-subtle)", padding: "112px var(--margem)", display: "flex", flexDirection: "column", gap: 48 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <span className="st-rotulo">Como acionar</span>
-            <h2 className="st-h2">Quatro passos</h2>
+        <section className="bg-bg-subtle py-28 px-(--margem) flex flex-col gap-12">
+          <div className="flex flex-col gap-4">
+            <span className={rotulo}>Como acionar</span>
+            <h2 className={tituloH2}>Quatro passos</h2>
           </div>
-          <ol style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexWrap: "wrap", gap: 32 }}>
+          <ol className="list-none m-0 p-0 flex flex-wrap gap-8">
             {passos.map((p, i) => (
-              <li key={p.titulo} style={{ flex: "1 1 220px", minWidth: 0, display: "flex", flexDirection: "column", gap: 10, paddingTop: 20, borderTop: "1.5px solid var(--text)" }}>
-                <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 56, lineHeight: 0.9, color: "var(--brand)" }}>{i + 1}</span>
-                <b style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 24, lineHeight: "26px", textTransform: "uppercase" }}>{p.titulo}</b>
-                <span style={{ fontSize: 15, lineHeight: "24px", color: "var(--text-secondary)" }}>{p.texto}</span>
+              <li key={p.titulo} className="flex-[1_1_220px] min-w-0 flex flex-col gap-2.5 pt-5 border-t-[1.5px] border-t-text">
+                <span className="font-display font-extrabold text-[56px] leading-[0.9] text-brand">{i + 1}</span>
+                <b className="font-display font-bold text-[24px] leading-[26px] uppercase">{p.titulo}</b>
+                <span className="text-[15px] leading-6 text-text-secondary">{p.texto}</span>
               </li>
             ))}
           </ol>
         </section>
 
-        <section style={{ padding: "96px var(--margem)", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "24px 64px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 640 }}>
-            <h2 style={h2}>É lojista e precisa acionar?</h2>
-            <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "var(--text-secondary)" }}>
+        <section className="py-24 px-(--margem) flex flex-wrap items-center justify-between gap-y-6 gap-x-16">
+          <div className="flex flex-col gap-3 max-w-160">
+            <h2 className="m-0 font-display font-bold text-[32px] leading-[34px] uppercase">É lojista e precisa acionar?</h2>
+            <p className="m-0 text-[17px] leading-7 text-text-secondary">
               Fale direto com a MotoKoi pelo WhatsApp e envie fotos da peça e da nota.
             </p>
           </div>
-          <a className="mk-btn mk-btn--dark mk-btn--lg" href={conteudo.whatsapp?.link ?? "#"}>
+          <LinkWhatsApp whatsapp={conteudo.whatsapp} className={classesBotao({ variante: "escuro", grande: true })}>
             <Icone nome="message" /> WhatsApp {conteudo.whatsapp?.numero ?? "[NÚMERO]"}
-          </a>
+          </LinkWhatsApp>
         </section>
       </main>
     </>

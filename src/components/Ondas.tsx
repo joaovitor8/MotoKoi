@@ -1,7 +1,7 @@
 // Padrão de ondas das faixas vermelhas. O pai precisa de position: relative e overflow: hidden.
 export function Ondas({ opacity = 0.28 }: { opacity?: number }) {
   return (
-    <svg aria-hidden="true" width="100%" height="100%" style={{ position: "absolute", left: 0, top: 0, opacity }}>
+    <svg aria-hidden="true" width="100%" height="100%" className="absolute left-0 top-0" style={{ opacity }}>
       <defs>
         <pattern id="ondas" width="60" height="30" patternUnits="userSpaceOnUse">
           <g fill="#e3141f" stroke="#ff5a61" strokeWidth="1.5">

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { equipe } from "@/lib/painel";
 import { FormularioConfiguracoes } from "./FormularioConfiguracoes";
 import { Materiais, type Material } from "./Materiais";
+import { Botao } from "@/components/Botao";
+import { Selo } from "@/components/Selo";
+import { cartao, tituloPainel } from "@/app/painel/estilos";
 
 export const metadata: Metadata = { title: "Conteúdo do site" };
 
@@ -25,35 +27,35 @@ export default async function ConteudoDoSite() {
   const c = config.data;
 
   const resumo = (titulo: string, texto: string, href: string, itens: { nome: string; publicado: boolean }[]) => (
-    <section className="ad-card" style={{ flex: "1 1 340px", minWidth: 0, padding: 24, display: "flex", flexDirection: "column", gap: 12 }}>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+    <section className={`${cartao} flex-[1_1_340px] min-w-0 p-6 flex flex-col gap-3`}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h2>{titulo}</h2>
-        <Link className="mk-btn mk-btn--secondary" href={href}>
+        <Botao variante="secundario" href={href}>
           Editar
-        </Link>
+        </Botao>
       </div>
-      <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>{texto}</span>
-      <ul style={{ listStyle: "none", margin: 0, padding: 0, borderTop: "1px solid var(--border)" }}>
+      <span className="text-[14px] leading-5 text-text-muted">{texto}</span>
+      <ul className="list-none m-0 p-0 border-t border-t-border">
         {itens.map((item, i) => (
-          <li key={i} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "10px 0", borderBottom: "1px solid var(--border)", fontSize: 14, lineHeight: "20px" }}>
+          <li key={i} className="flex justify-between gap-3 py-2.5 px-0 border-b border-b-border text-[14px] leading-5">
             <span>{item.nome}</span>
-            {item.publicado ? <span className="mk-badge mk-badge--success">Publicado</span> : <span className="mk-badge mk-badge--warning">Rascunho</span>}
+            {item.publicado ? <Selo tom="sucesso">Publicado</Selo> : <Selo tom="aviso">Rascunho</Selo>}
           </li>
         ))}
-        {itens.length === 0 && <li style={{ padding: "10px 0", fontSize: 14, lineHeight: "20px", color: "var(--text-secondary)" }}>Nada cadastrado ainda.</li>}
+        {itens.length === 0 && <li className="py-2.5 px-0 text-[14px] leading-5 text-text-secondary">Nada cadastrado ainda.</li>}
       </ul>
     </section>
   );
 
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <h1 className="ad-h1">Conteúdo do site</h1>
-        <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>
+      <div className="flex flex-col gap-1">
+        <h1 className={tituloPainel}>Conteúdo do site</h1>
+        <span className="text-[14px] leading-5 text-text-muted">
           Números da marca, catálogo em PDF, materiais para lojistas, depoimentos e garantia padrão.
         </span>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start", gap: 24 }}>
+      <div className="flex flex-wrap items-start gap-6">
         {resumo(
           "Números da marca",
           "Aparecem na Home. Use só números que dá para comprovar.",

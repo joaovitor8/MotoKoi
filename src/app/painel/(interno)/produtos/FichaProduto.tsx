@@ -50,24 +50,24 @@ export function FichaProduto({ produtoId, caminho }: { produtoId: number; caminh
     });
 
   return (
-    <div aria-busy={ocupado} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <span style={{ fontWeight: 600, fontSize: 14, lineHeight: "16px" }}>Ficha técnica (PDF)</span>
+    <div aria-busy={ocupado} className="flex flex-col gap-1.5">
+      <span className="font-semibold text-[14px] leading-4">Ficha técnica (PDF)</span>
       {caminho ? (
-        <span style={{ display: "flex", flexWrap: "wrap", gap: "4px 16px", fontSize: 14, lineHeight: "20px" }}>
-          <a href={urlDoMaterial(caminho)} target="_blank" rel="noreferrer" style={{ fontWeight: 600 }}>
+        <span className="flex flex-wrap gap-y-1 gap-x-4 text-[14px] leading-5">
+          <a href={urlDoMaterial(caminho)} target="_blank" rel="noreferrer" className="font-semibold">
             Ver o PDF atual
           </a>
           <button
             type="button"
             disabled={ocupado}
             onClick={() => window.confirm("Remover a ficha técnica? Não dá para desfazer.") && remover()}
-            style={{ all: "unset", cursor: "pointer", fontWeight: 600, color: "var(--text-brand)", textDecoration: "underline" }}
+            className="[all:unset] cursor-pointer! font-semibold! text-text-brand! underline!"
           >
             Remover
           </button>
         </span>
       ) : (
-        <span style={{ fontSize: 14, lineHeight: "20px", color: "var(--text-muted)" }}>Nenhum arquivo.</span>
+        <span className="text-[14px] leading-5 text-text-muted">Nenhum arquivo.</span>
       )}
       <input
         ref={campo}
@@ -76,10 +76,10 @@ export function FichaProduto({ produtoId, caminho }: { produtoId: number; caminh
         aria-label={caminho ? "Trocar a ficha técnica em PDF" : "Enviar a ficha técnica em PDF"}
         disabled={ocupado}
         onChange={(e) => e.target.files?.[0] && enviar(e.target.files[0])}
-        style={{ maxWidth: "100%", fontSize: 13 }}
+        className="max-w-full text-[13px]"
       />
       {erro && (
-        <p role="alert" style={{ margin: 0, fontWeight: 600, fontSize: 14, lineHeight: "20px", color: "var(--text-danger)" }}>
+        <p role="alert" className="m-0 font-semibold text-[14px] leading-5 text-text-danger">
           {erro}
         </p>
       )}
