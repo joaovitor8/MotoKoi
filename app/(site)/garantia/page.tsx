@@ -9,9 +9,9 @@ export const metadata: Metadata = { title: "Garantia" };
 const cobre = [
   "Defeito de fabricação no material ou no acabamento",
   "Peça que não corresponde à aplicação indicada no catálogo",
-  "[OUTRO ITEM, A CONFIRMAR COM O DONO]",
+  "Peça que chega com defeito dentro da caixa lacrada (EX)",
 ];
-const naoCobre = ["Desgaste natural pelo uso", "Instalação incorreta ou falta de manutenção", "[OUTRO ITEM, A CONFIRMAR COM O DONO]"];
+const naoCobre = ["Desgaste natural pelo uso", "Instalação incorreta ou falta de manutenção", "Uso em competição ou em moto modificada (EX)"];
 
 const h2 = { margin: 0, fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 32, lineHeight: "34px", textTransform: "uppercase" } as const;
 const item = { display: "flex", gap: 14, padding: "14px 0", borderBottom: "1px solid var(--border)", fontSize: 16, lineHeight: "24px" } as const;

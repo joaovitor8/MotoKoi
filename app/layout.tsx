@@ -23,7 +23,9 @@ const fontes = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" style={fontes}>
-      <body>{children}</body>
+      {/* Extensões do navegador (ex.: ColorZilla põe cz-shortcut-listen) mexem nos atributos do <body> antes do React.
+          suppressHydrationWarning ignora só os atributos deste elemento; erros nos filhos continuam aparecendo. */}
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

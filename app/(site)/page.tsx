@@ -198,14 +198,15 @@ export default async function Home() {
             </p>
           </div>
           {conteudo.numeros.length > 0 && (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 40 }}>
+            <dl style={{ margin: 0, display: "flex", flexWrap: "wrap", gap: 40 }}>
               {conteudo.numeros.map((n) => (
-                <div key={n.rotulo} style={{ flex: "1 1 220px", minWidth: 0, display: "flex", flexDirection: "column", gap: 10, paddingTop: 24, borderTop: "1.5px solid var(--text)" }}>
-                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(56px, 6vw, 88px)", lineHeight: 0.9, color: "var(--brand)" }}>{n.valor}</span>
-                  <span style={{ fontSize: 16, lineHeight: "24px", color: "var(--text-secondary)", maxWidth: 260 }}>{n.rotulo}</span>
+                // column-reverse: no HTML vem o rótulo (dt) e depois o número (dd); na tela, o número fica em cima.
+                <div key={n.rotulo} style={{ flex: "1 1 220px", minWidth: 0, display: "flex", flexDirection: "column-reverse", justifyContent: "flex-end", gap: 10, paddingTop: 24, borderTop: "1.5px solid var(--text)" }}>
+                  <dt style={{ fontSize: 16, lineHeight: "24px", color: "var(--text-secondary)", maxWidth: 260 }}>{n.rotulo}</dt>
+                  <dd style={{ margin: 0, fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(56px, 6vw, 88px)", lineHeight: 0.9, color: "var(--brand)" }}>{n.valor}</dd>
                 </div>
               ))}
-            </div>
+            </dl>
           )}
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px 24px", padding: "20px 24px", background: "var(--bg-subtle)", borderRadius: 8 }}>
             <span className="mk-badge" style={{ background: "var(--text)", color: "var(--text-inverse)" }}>

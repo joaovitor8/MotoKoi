@@ -20,8 +20,8 @@ export default async function Privacidade() {
       titulo: "Quem cuida dos seus dados",
       corpo: (
         <p style={texto}>
-          [RAZÃO SOCIAL], CNPJ [NÚMERO], [ENDEREÇO COMPLETO], dona da marca MotoKoi. Para qualquer assunto sobre seus dados, fale com o
-          encarregado pelo e-mail [E-MAIL DO ENCARREGADO] ou pelo {whatsapp}.
+          MotoKoi Peças para Motos Ltda. (EX), CNPJ 00.000.000/0001-00 (EX), Rua Marechal Deodoro, 1462, Araçatuba, SP (EX), dona da marca MotoKoi. Para qualquer assunto sobre seus dados, fale com o
+          encarregado pelo e-mail privacidade@example.com (EX) ou pelo {whatsapp}.
         </p>
       ),
     },
@@ -70,7 +70,7 @@ export default async function Privacidade() {
       titulo: "Por quanto tempo guardamos",
       corpo: (
         <p style={texto}>
-          Enquanto o cadastro estiver em análise ou a parceria de revenda existir. Cadastros recusados são apagados em [PRAZO]. Você pode
+          Enquanto o cadastro estiver em análise ou a parceria de revenda existir. Cadastros recusados são apagados em 12 meses (EX). Você pode
           pedir a exclusão antes disso a qualquer momento.
         </p>
       ),
@@ -80,7 +80,7 @@ export default async function Privacidade() {
       corpo: (
         <p style={texto}>
           Você pode pedir para saber quais dados temos, receber uma cópia, corrigir, apagar ou retirar o aceite de contato (LGPD, art. 18).
-          Basta escrever para o encarregado no contato acima. Respondemos em até [N] dias. Se não ficar satisfeito, pode reclamar na
+          Basta escrever para o encarregado no contato acima. Respondemos em até 15 dias (EX). Se não ficar satisfeito, pode reclamar na
           Autoridade Nacional de Proteção de Dados (ANPD).
         </p>
       ),
@@ -98,7 +98,7 @@ export default async function Privacidade() {
         <section style={{ padding: "72px var(--margem) 64px", display: "flex", flexDirection: "column", gap: 20 }}>
           <span className="st-rotulo">Privacidade</span>
           <h1 className="st-h1">Política de privacidade</h1>
-          <p style={{ ...texto, fontSize: 15 }}>Atualizada em [DATA DE PUBLICAÇÃO]. [TEXTO A REVISAR COM QUEM ENTENDE DE LGPD]</p>
+          <p style={{ ...texto, fontSize: 15 }}>Atualizada em 17/11/2026 (EX). [TEXTO A REVISAR COM QUEM ENTENDE DE LGPD]</p>
         </section>
         <section style={{ padding: "0 var(--margem) 112px", display: "flex", flexDirection: "column", gap: 40, maxWidth: 820 }}>
           {secoes.map((s) => (

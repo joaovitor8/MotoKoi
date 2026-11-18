@@ -44,6 +44,6 @@ next-env.d.ts
 
 
 # my files
-.claude
-motokoi-site
-outros
+#.claude
+# motokoi-site
+# outros

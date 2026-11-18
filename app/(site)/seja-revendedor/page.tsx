@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LinkWhatsApp } from "@/components/LinkWhatsApp";
 import { Cabecalho } from "@/components/Cabecalho";
 import { Icone } from "@/components/Icone";
 import { Ondas } from "@/components/Ondas";
@@ -28,10 +29,10 @@ const vantagens = [
 ];
 
 const duvidas = [
-  { pergunta: "Preciso ter CNPJ?", resposta: "[RESPOSTA DO DONO: aceita CPF? MEI?]" },
-  { pergunta: "Qual é o pedido mínimo?", resposta: "[RESPOSTA DO DONO: valor ou quantidade mínima]" },
-  { pergunta: "Para quais regiões vocês entregam?", resposta: "[RESPOSTA DO DONO: regiões e prazo]" },
-  { pergunta: "Como funciona a garantia das peças?", resposta: "[RESPOSTA DO DONO: prazo e como acionar].", garantia: true },
+  { pergunta: "Preciso ter CNPJ?", resposta: "Não é obrigatório. Oficinas e MEIs podem começar com CPF ou com o CNPJ do MEI. (EX)" },
+  { pergunta: "Qual é o pedido mínimo?", resposta: "R$ 500,00 no primeiro pedido, misturando as peças que quiser. Nos seguintes não há mínimo. (EX)" },
+  { pergunta: "Para quais regiões vocês entregam?", resposta: "Para SP, MS, PR, MG e GO, com entrega em 3 a 7 dias úteis a partir de Araçatuba. (EX)" },
+  { pergunta: "Como funciona a garantia das peças?", resposta: "Toda peça tem 3 meses de garantia contra defeito de fabricação. O lojista aciona pelo WhatsApp com a foto da peça e da nota. (EX)", garantia: true },
   {
     pergunta: "Vocês têm o código original de cada peça?",
     resposta: "Sim. Cada peça do catálogo mostra o código MotoKoi e o código original da montadora equivalente.",
@@ -73,26 +74,27 @@ export default async function SejaRevendedor() {
                 Fazer o cadastro <Icone nome="arrow-right" />
               </a>
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 40 }}>
+            <dl style={{ margin: 0, display: "flex", flexWrap: "wrap", gap: 40 }}>
               {numeros.map((n) => (
                 <div
                   key={n.numero}
                   style={{
                     flex: "1 1 200px",
                     display: "flex",
-                    flexDirection: "column",
+                    flexDirection: "column-reverse", // no HTML vem o rótulo (dt) e depois o número (dd); na tela, o número fica em cima
+                    justifyContent: "flex-end",
                     gap: 8,
                     paddingTop: 20,
                     borderTop: "1.5px solid var(--text-on-brand)",
                   }}
                 >
-                  <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(56px, 6vw, 88px)", lineHeight: 0.9 }}>
+                  <dt style={{ fontSize: 16, lineHeight: "24px" }}>{n.texto}</dt>
+                  <dd style={{ margin: 0, fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(56px, 6vw, 88px)", lineHeight: 0.9 }}>
                     {n.numero}
-                  </span>
-                  <span style={{ fontSize: 16, lineHeight: "24px" }}>{n.texto}</span>
+                  </dd>
                 </div>
               ))}
-            </div>
+            </dl>
           </div>
         </section>
 
@@ -153,9 +155,9 @@ export default async function SejaRevendedor() {
             </ul>
             <p style={{ margin: 0, fontSize: 15, lineHeight: "24px", color: "var(--text-secondary)" }}>
               Prefere conversar?{" "}
-              <a href={conteudo.whatsapp?.link ?? "#"} style={{ fontWeight: 600 }}>
+              <LinkWhatsApp whatsapp={conteudo.whatsapp} style={{ fontWeight: 600 }}>
                 Chame no WhatsApp {conteudo.whatsapp?.numero ?? "[NÚMERO]"}
-              </a>
+              </LinkWhatsApp>
             </p>
           </div>
 

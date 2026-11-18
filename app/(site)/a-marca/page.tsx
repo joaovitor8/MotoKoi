@@ -66,10 +66,10 @@ export default async function AMarca() {
             }}
           >
             <p style={{ margin: 0, fontSize: 20, lineHeight: "32px", color: "var(--text-secondary)" }}>
-              [HISTÓRIA DA MARCA: em que ano começou, em qual cidade e por quê. Dois ou três parágrafos curtos, contados
-              pelo dono.]
+              A MotoKoi nasceu em 2018, em Araçatuba, SP, dentro da Mac Atacado. Os lojistas pediam peças de reposição com
+              preço justo e que durassem, e a resposta foi criar uma marca própria, começando pelo kit transmissão. (EX)
             </p>
-            <p style={paragrafo}>[O QUE MUDOU DESDE ENTÃO: novas linhas de peças, lojas, revendedores.]</p>
+            <p style={paragrafo}>Depois vieram os cabos, os carburadores, os discos de embreagem, as câmaras de ar e as capas de chuva. Hoje a linha chega a lojas e oficinas de cinco estados. (EX)</p>
           </div>
         </section>
 

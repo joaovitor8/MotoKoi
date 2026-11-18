@@ -1,0 +1,108 @@
+ALTERAÇÕES NO CÓDIGO PARA OS DADOS DE EXEMPLO (EX)
+Data: 17/11/2026
+
+Resumo
+------
+A maior parte dos dados de exemplo foi gravada direto no banco (Supabase) e não mexeu no código.
+Só 4 arquivos do site foram alterados, porque esses textos ficam escritos nas próprias páginas, e não no banco.
+Em todos eles, um texto entre colchetes [ASSIM] foi trocado por um texto inventado que termina com "(EX)".
+Nenhuma estrutura, estilo ou lógica foi mexida nessas trocas: só o texto.
+
+Quando os dados reais chegarem, troque cada texto "(EX)" abaixo pelo texto verdadeiro do dono
+(ou volte ao colchete original, se a informação ainda não existir).
+
+
+1) app/(site)/garantia/page.tsx
+-------------------------------
+Lista "O que a garantia cobre" (constante `cobre`, linha 12)
+  Antes:  [OUTRO ITEM, A CONFIRMAR COM O DONO]
+  Depois: Peça que chega com defeito dentro da caixa lacrada (EX)
+
+Lista "O que não cobre" (constante `naoCobre`, linha 14)
+  Antes:  [OUTRO ITEM, A CONFIRMAR COM O DONO]
+  Depois: Uso em competição ou em moto modificada (EX)
+
+
+2) app/(site)/seja-revendedor/page.tsx
+--------------------------------------
+Respostas das dúvidas frequentes (constante `duvidas`, linhas 32 a 35)
+
+  "Preciso ter CNPJ?"
+  Antes:  [RESPOSTA DO DONO: aceita CPF? MEI?]
+  Depois: Não é obrigatório. Oficinas e MEIs podem começar com CPF ou com o CNPJ do MEI. (EX)
+
+  "Qual é o pedido mínimo?"
+  Antes:  [RESPOSTA DO DONO: valor ou quantidade mínima]
+  Depois: R$ 500,00 no primeiro pedido, misturando as peças que quiser. Nos seguintes não há mínimo. (EX)
+
+  "Para quais regiões vocês entregam?"
+  Antes:  [RESPOSTA DO DONO: regiões e prazo]
+  Depois: Para SP, MS, PR, MG e GO, com entrega em 3 a 7 dias úteis a partir de Araçatuba. (EX)
+
+  "Como funciona a garantia das peças?"
+  Antes:  [RESPOSTA DO DONO: prazo e como acionar].
+  Depois: Toda peça tem 3 meses de garantia contra defeito de fabricação. O lojista aciona pelo WhatsApp
+          com a foto da peça e da nota. (EX)
+
+Obs.: este arquivo também tem mudanças de HTML semântico feitas antes (lista <dl> nos números e o
+componente LinkWhatsApp). Elas não têm relação com os dados de exemplo e devem ficar.
+
+
+3) app/(site)/a-marca/page.tsx
+------------------------------
+História da marca (linhas 69 a 72)
+
+  Primeiro parágrafo
+  Antes:  [HISTÓRIA DA MARCA: em que ano começou, em qual cidade e por quê. Dois ou três parágrafos
+          curtos, contados pelo dono.]
+  Depois: A MotoKoi nasceu em 2018, em Araçatuba, SP, dentro da Mac Atacado. Os lojistas pediam peças
+          de reposição com preço justo e que durassem, e a resposta foi criar uma marca própria,
+          começando pelo kit transmissão. (EX)
+
+  Segundo parágrafo
+  Antes:  [O QUE MUDOU DESDE ENTÃO: novas linhas de peças, lojas, revendedores.]
+  Depois: Depois vieram os cabos, os carburadores, os discos de embreagem, as câmaras de ar e as capas
+          de chuva. Hoje a linha chega a lojas e oficinas de cinco estados. (EX)
+
+
+4) app/(site)/privacidade/page.tsx
+----------------------------------
+Seção "Quem cuida dos seus dados" (linhas 23 e 24)
+  Antes:  [RAZÃO SOCIAL], CNPJ [NÚMERO], [ENDEREÇO COMPLETO]
+  Depois: MotoKoi Peças para Motos Ltda. (EX), CNPJ 00.000.000/0001-00 (EX),
+          Rua Marechal Deodoro, 1462, Araçatuba, SP (EX)
+
+  Antes:  [E-MAIL DO ENCARREGADO]
+  Depois: privacidade@example.com (EX)
+
+Seção "Por quanto tempo guardamos" (linha 73)
+  Antes:  apagados em [PRAZO]
+  Depois: apagados em 12 meses (EX)
+
+Seção "Seus direitos" (linha 83)
+  Antes:  Respondemos em até [N] dias.
+  Depois: Respondemos em até 15 dias (EX).
+
+Data no topo da página (linha 101)
+  Antes:  Atualizada em [DATA DE PUBLICAÇÃO].
+  Depois: Atualizada em 17/11/2026 (EX).
+
+Ficou de propósito, sem troca: [TEXTO A REVISAR COM QUEM ENTENDE DE LGPD]
+(é um lembrete de que o texto precisa de revisão jurídica, não uma informação faltando).
+
+
+O que NÃO foi alterado no código
+--------------------------------
+- Fotos: continuam os espaços cinza [FOTO ...] (CartaoProduto.tsx, catalogo/[slug]/page.tsx, a-marca).
+- Mapa de Onde comprar: continua [MAPA com os pontos de venda] (onde-comprar/page.tsx).
+- Os outros colchetes do código, como [CÓDIGO], [NÚMERO], [ANOS], [HORÁRIO DE FUNCIONAMENTO] e [N],
+  continuam no código. Eles só aparecem quando o banco está vazio; agora o banco tem dado de exemplo,
+  por isso sumiram da tela sem mudar o código.
+
+
+Arquivos novos (fora do Git, na pasta outros/arquivos-exemplo/)
+----------------------------------------------------------------
+- apagar-exemplos.sql: remove do banco tudo que tem "(EX)". Rodar no SQL Editor do Supabase.
+- alteracoes-no-codigo.txt: este arquivo.
+- catalogo/, fichas/, fotos/, logo/, outro/: PDFs, logo SVG e ZIP de exemplo para enviar pelo painel
+  (Conteúdo do site > Materiais, e Ficha técnica na tela de cada produto).

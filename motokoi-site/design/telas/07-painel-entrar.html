@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel MotoKoi — Entrar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&amp;family=Barlow+Condensed:wght@600;700;800&amp;display=swap">
+<link rel="stylesheet" href="../motokoi.css">
+<link rel="stylesheet" href="../painel.css">
+<style>html,body{height:100%}</style>
+</head>
+<body>
+<div style="min-height: 100%; display: flex; flex-wrap: wrap; background: var(--bg); color: var(--text); font-family: var(--font-sans)">
+<div style="flex: 1 1 480px; min-height: 360px; position: relative; overflow: hidden; background: var(--brand); color: var(--text-on-brand); display: flex; flex-direction: column; justify-content: space-between; gap: 48px; padding: 48px; box-sizing: border-box">
+<svg aria-hidden="true" width="100%" height="100%" style="position: absolute; left: 0; top: 0; opacity: 0.32"><defs><pattern id="ondas-login" width="60" height="30" patternUnits="userSpaceOnUse"><g fill="#e3141f" stroke="#ff5a61" stroke-width="1.5"><circle cx="30" cy="15" r="30"/><circle cx="30" cy="15" r="22"/><circle cx="30" cy="15" r="14"/><circle cx="30" cy="15" r="6"/><circle cx="0" cy="30" r="30"/><circle cx="0" cy="30" r="22"/><circle cx="0" cy="30" r="14"/><circle cx="0" cy="30" r="6"/><circle cx="60" cy="30" r="30"/><circle cx="60" cy="30" r="22"/><circle cx="60" cy="30" r="14"/><circle cx="60" cy="30" r="6"/></g></pattern></defs><rect width="100%" height="100%" fill="url(#ondas-login)"/></svg>
+<span class="mk-logo mk-logo--inverse" style="position: relative">Moto<b style="color: var(--text-on-brand)">Koi</b></span>
+<div style="position: relative; display: flex; flex-direction: column; gap: 16px"><span style="font-weight: 600; font-size: 12px; line-height: 16px; letter-spacing: .2em; text-transform: uppercase">Painel administrativo</span><p style="margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(56px, 6.4vw, 96px); line-height: .9; text-transform: uppercase">O catálogo<br>na sua mão</p><p style="margin: 0; font-size: 18px; line-height: 28px; max-width: 440px">Cadastre peças, troque fotos e responda quem quer revender.</p></div>
+</div>
+<main style="flex: 1 1 480px; display: flex; align-items: center; justify-content: center; padding: 48px 24px; box-sizing: border-box">
+<form style="width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 8px"><h1 class="ad-h1">Entrar</h1><p style="margin: 0; font-size: 16px; line-height: 24px; color: var(--text-secondary)">Acesso só para a equipe MotoKoi.</p></div>
+<label class="mk-field" style="width: auto; flex: 0 0 auto; min-width: 0"><span class="mk-field__label">E-mail</span><span class="mk-field__control"><input type="email" placeholder="voce@motokoi.com.br" style="min-width: 0"></span></label>
+<label class="mk-field" style="width: auto; flex: 0 0 auto; min-width: 0"><span class="mk-field__label">Senha</span><span class="mk-field__control"><input type="password" placeholder="Sua senha" style="min-width: 0"></span></label>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px"><label class="mk-check is-checked"><span class="mk-check__box"><svg class="mk-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Manter conectado</label><a href="#" style="font-weight: 600; font-size: 14px; line-height: 20px">Esqueci a senha</a></div>
+<button type="submit" class="mk-btn mk-btn--dark mk-btn--lg mk-btn--block">Entrar <svg class="mk-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+<a href="#" style="font-size: 14px; line-height: 20px; color: var(--text-muted); text-align: center">Voltar para o site</a>
+</form>
+</main>
+</div>
+</body>
+</html>
