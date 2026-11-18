@@ -9,6 +9,7 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    "referencias/**", // material de referência, não é código do site
     "out/**",
     "build/**",
     "next-env.d.ts",

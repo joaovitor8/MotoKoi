@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test lib/revenda.test.mjs lib/filtro.test.mjs \"app/painel/(interno)/cadastros/ler.test.mjs\" && node supabase/testes/regras-de-acesso.mjs",
+    "test": "node --test src/lib/revenda.test.mjs src/lib/filtro.test.mjs \"src/app/painel/(interno)/cadastros/ler.test.mjs\" && node supabase/testes/regras-de-acesso.mjs",
     "test:seguranca": "node testes/seguranca.mjs"
   },
   "dependencies": {

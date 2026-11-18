@@ -11,7 +11,7 @@ Arquivos:
 - `supabase/migrations/20261115193429_concorrencia.sql`: o que veio da análise dos concorrentes (códigos originais, garantia, Inmetro, números da marca, materiais, depoimentos, busca do catálogo e bucket `materiais`).
 - `supabase/migrations/20261115193447_salvar_produto_campos_novos.sql`: `salvar_produto` passa a gravar garantia, Inmetro e códigos originais.
 - `supabase/seed.sql`: dados para desenvolvimento (categorias, motos, 9 produtos reais sem código nem foto, a loja da Mac Atacado).
-- `supabase/testes/regras-de-acesso.mjs`: 63 testes que sobem um Postgres local e conferem quem pode ler e escrever o quê.
+- `supabase/testes/regras-de-acesso.mjs`: 64 testes que sobem um Postgres local e conferem quem pode ler e escrever o quê.
 
 ## Diagrama
 
@@ -206,8 +206,20 @@ where m.slug = 'honda-cg-150-titan';
 -- Página do produto (com supabase-js, numa chamada só)
 -- supabase.from('produtos')
 --   .select('*, categorias(nome, slug), produto_especificacoes(*), produto_itens_caixa(*),
---            produto_fotos(*), produto_motos(ano_inicio, ano_fim, observacao, motos(*))')
+--            produto_fotos(*), produto_codigos_originais(fabricante, codigo),
+--            produto_motos(ano_inicio, ano_fim, observacao, motos(*))')
 --   .eq('slug', slug).single()
+
+-- Busca do catálogo e da Home (texto, código MotoKoi, código original, moto, categoria, ano)
+-- Hoje o site filtra em memória (src/lib/filtro.ts, mesma regra); esta função fica pronta para quando o catálogo crescer.
+select * from buscar_produtos('16100-kvs', null, null, null);
+select * from buscar_produtos(null, 'embreagem', 'honda-cg-150-titan', 2012);
+-- supabase.rpc('buscar_produtos', { p_termo, p_categoria, p_moto, p_ano })
+--   .select('*, categorias(nome, slug), produto_fotos(caminho, ordem)')
+
+-- Garantia que aparece no produto
+select coalesce(p.garantia_meses, c.garantia_meses_padrao) as meses
+from produtos p cross join configuracoes_site c where p.slug = $1;
 ```
 
 As regras de acesso já filtram os rascunhos para o visitante, mas deixe o `status = 'publicado'` explícito nas consultas do site: fica mais claro e usa o índice.
@@ -216,7 +228,9 @@ As regras de acesso já filtram os rascunhos para o visitante, mas deixe o `stat
 
 - **Formulário de revenda:** grave com `insert` **sem** pedir o registro de volta (no supabase-js, não encadeie `.select()` depois do `.insert()`). O visitante pode inserir mas não pode ler, então pedir o retorno dá erro de permissão.
 - **Spam no formulário:** ative o captcha do Supabase (hCaptcha ou Cloudflare Turnstile) ou valide o envio numa rota do servidor.
-- **LGPD:** o formulário guarda nome, documento, WhatsApp e e-mail. O site precisa de política de privacidade, e o texto deve ser revisado por quem entende do assunto.
+- **LGPD:** o formulário guarda nome, documento, WhatsApp e e-mail. A política de privacidade está em `/privacidade` (rascunho, o texto deve ser revisado por quem entende do assunto), e o painel de revenda tem "Excluir dados do cadastro" para atender pedidos de exclusão.
+- **Arquivos para baixar** ficam no bucket `materiais` (PDF, ZIP, PNG, SVG, até 50 MB). O banco guarda só o caminho.
+- **Dados de exemplo:** o banco do projeto tem dados de demonstração marcados com "(EX)". Para apagar, use `referencias/outros/arquivos-exemplo/apagar-exemplos.sql`.
 - **Busca:** para algumas centenas de produtos, `ilike` em nome e código resolve. Se o catálogo crescer muito, dá para trocar por busca de texto completo.
 - **Ordem das fotos:** ao reordenar, atualize a coluna `ordem` de todas as fotos do produto.
 - **Se um dia o site vender:** entram tabelas novas (preço, estoque, clientes, pedidos, itens do pedido, pagamento). As tabelas atuais continuam valendo.

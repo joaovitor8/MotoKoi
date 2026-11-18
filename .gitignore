@@ -41,9 +41,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-
-# my files
-#.claude
-# motokoi-site
-# outros

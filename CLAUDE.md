@@ -26,7 +26,7 @@ Decididas pelo João em 12/11/2026:
 - **Stack confirmada** (seção 4), com o CSS copiado como está, sem Tailwind.
 - **Categorias, Motos e Lojas do painel:** montar no padrão da tela de Produtos (tabela + formulário), sem visual novo.
 - **Celular:** conferir cada página em largura de celular assim que ela ficar pronta, sem mudar o visual aprovado.
-- **Onde fica o projeto:** o Next.js está na raiz desta pasta (`motokoi`). O material de design continua em `motokoi-site/design/` e serve só de referência.
+- **Onde fica o projeto:** o Next.js está na raiz desta pasta (`motokoi`), com o código em `src/` (`src/app`, `src/components`, `src/lib`, `src/proxy.ts`). Configuração (`next.config.ts`, `package.json`, `tsconfig.json`), `supabase/` e `testes/` ficam na raiz. O material de referência (telas de design, `CLAUDE.md` antigo, `banco.md`, arquivos de exemplo, modelos 3D) fica em `referencias/` e não é código do site. O atalho `@/` aponta para `src/`.
 
 ## 3. Decisões em aberto (pergunte ao João antes de assumir)
 
@@ -37,7 +37,7 @@ Nenhuma no momento. As cinco que estavam aqui foram respondidas e estão na seç
 - **Next.js 16** (App Router) com **TypeScript**.
 - **Supabase**: Postgres para os dados, Auth para o login do painel, Storage para as fotos dos produtos.
 - **Vercel** para publicar.
-- CSS: quando for usar um estilo, **copiar** o arquivo de `motokoi-site/design/` para o projeto e importar, sem reescrever nem converter. O `motokoi.css` já está em `app/motokoi.css`; o `painel.css` entra quando o painel for construído.
+- CSS: quando for usar um estilo, **copiar** o arquivo de `referencias/motokoi-site/design/` para o projeto e importar, sem reescrever nem converter. O `motokoi.css` e o `painel.css` já estão em `src/app/`.
 
 Confira a documentação atual de cada ferramenta antes de usar; não confie em versões de memória. Regras do Next para agentes: @AGENTS.md
 
@@ -59,7 +59,7 @@ Confira a documentação atual de cada ferramenta antes de usar; não confie em 
 | Painel: conteúdo do site | `/painel/conteudo` | `design/telas/12-painel-conteudo-do-site.html` |
 
 Notas:
-- Os caminhos `design/...` deste arquivo são relativos a `motokoi-site/`.
+- Os caminhos `design/...` deste arquivo são relativos a `referencias/motokoi-site/`.
 - Abra os HTML no navegador para ver o resultado esperado. Eles são a fonte da verdade do visual.
 - Na Home de referência, o menu aponta para âncoras da própria página. No site, o menu leva para as páginas da tabela.
 - O menu do site tem quatro itens: Catálogo, A marca, Onde comprar, Revenda. O item da página atual ganha um traço vermelho embaixo.
@@ -101,22 +101,23 @@ Regras visuais que as telas seguem:
 
 ## 7. Banco de dados
 
-O banco já está modelado e testado. Leia `docs/banco.md` antes de mexer nele.
+O banco já está modelado e testado. Leia `referencias/motokoi-site/docs/banco.md` antes de mexer nele (é a única cópia, já atualizada com as 6 migrações).
 
 - Migrações em `supabase/migrations/`, dados de desenvolvimento em `supabase/seed.sql`.
-- Teste das regras de acesso: `node supabase/testes/regras-de-acesso.mjs` (63 verificações).
+- Teste das regras de acesso: `node supabase/testes/regras-de-acesso.mjs` (64 verificações).
 - Mudanças no banco entram como **nova migração**; não edite as que já foram aplicadas.
 - Explique ao João o porquê de cada mudança no banco: ele está aprendendo modelagem.
 - Projeto no Supabase: `motokoi` (ref `bbzpiwyxspdnhkqoqiwj`, região us-west-2). As migrações e o seed estão aplicados nele; os nomes dos arquivos em `supabase/migrations/` usam a mesma versão registrada lá.
-- O site lê o catálogo por `lib/produtos.ts` (supabase-js com a chave publishable, `"use cache"` com a etiqueta `catalogo`). O painel, ao salvar, deve chamar `updateTag("catalogo")`. As variáveis ficam em `.env.local` (modelo em `.env.example`) e precisam existir também na Vercel.
-- Painel: `proxy.ts` renova a sessão e barra quem não entrou; toda página e ação interna começa com `equipe()` de `lib/painel.ts`, que exige login e linha ativa em `perfis`. Telas: entrar, produtos (lista e formulário com fotos), pedidos de revenda, e Categorias, Motos e Lojas, que compartilham `app/painel/(interno)/cadastros/` (uma configuração por tela em `config.ts`). O produto é gravado pela função `salvar_produto` do banco, numa transação. Toda gravação chama `updateTag("catalogo")`. Falta: "Esqueci a senha". As telas internas foram construídas sem que o Claude pudesse entrar; quem testa é o João.
-- Pacote de 15/11/2026 (análise dos concorrentes, seção 9.1): banco e site prontos. O site lê o conteúdo editável por `lib/conteudo.ts` (garantia padrão, WhatsApp, PDF do catálogo, números, materiais, depoimentos); seções sem dado publicado ficam escondidas, e dado que depende do dono aparece entre colchetes. O catálogo continua filtrando em memória (`lib/filtro.ts`, com ano e código original); `buscar_produtos` existe no banco e não é usada. O painel também está pronto: o formulário de produto tem códigos originais, garantia, Inmetro e ficha em PDF, e `/painel/conteudo` reúne garantia padrão, WhatsApp, materiais (envio para o bucket `materiais`) e os atalhos para Números da marca e Depoimentos, que usam o cadastro genérico. Essas telas novas ainda não foram testadas com login.
+- O site lê o catálogo por `src/lib/produtos.ts` (supabase-js com a chave publishable, `"use cache"` com a etiqueta `catalogo`). O painel, ao salvar, deve chamar `updateTag("catalogo")`. As variáveis ficam em `.env.local` (modelo em `.env.example`) e precisam existir também na Vercel.
+- Painel: `src/proxy.ts` renova (precisa ficar dentro de `src/`, no mesmo nível de `app`; na raiz o Next ignora e o painel fica sem proteção) a sessão e barra quem não entrou; toda página e ação interna começa com `equipe()` de `src/lib/painel.ts`, que exige login e linha ativa em `perfis` e chama `connection()` (o painel nunca é pré-renderizado, porque depende da sessão e da hora). O `loading.tsx` de `src/app/painel/(interno)/` mostra "Carregando…" ao trocar de tela pelo menu. Telas: entrar, produtos (lista e formulário com fotos), pedidos de revenda, e Categorias, Motos e Lojas, que compartilham `src/app/painel/(interno)/cadastros/` (uma configuração por tela em `config.ts`). O produto é gravado pela função `salvar_produto` do banco, numa transação. Toda gravação chama `updateTag("catalogo")`. Falta: "Esqueci a senha". As telas internas foram construídas sem que o Claude pudesse entrar; quem testa é o João.
+- Pacote de 15/11/2026 (análise dos concorrentes, seção 9.1): banco e site prontos. O site lê o conteúdo editável por `src/lib/conteudo.ts` (garantia padrão, WhatsApp, PDF do catálogo, números, materiais, depoimentos); seções sem dado publicado ficam escondidas, e dado que depende do dono aparece entre colchetes. O catálogo continua filtrando em memória (`src/lib/filtro.ts`, com ano e código original); `buscar_produtos` existe no banco e não é usada. O painel também está pronto: o formulário de produto tem códigos originais, garantia, Inmetro e ficha em PDF, e `/painel/conteudo` reúne garantia padrão, WhatsApp, materiais (envio para o bucket `materiais`) e os atalhos para Números da marca e Depoimentos, que usam o cadastro genérico. Essas telas novas ainda não foram testadas com login.
 - Revisão de celular e acessibilidade (passo 8): feita em 15/11/2026 nas páginas públicas e na tela de entrar. As telas internas do painel não foram revisadas, porque exigem login.
 - Segurança (revisão de 15/11/2026): cabeçalhos e CSP em `next.config.ts`, cookies de sessão com `Secure` em produção, páginas de erro em português sem detalhes técnicos. `npm run test:seguranca` testa as proteções contra um servidor no ar (34 verificações; a de "cadastro público desligado" falha até o João desligar no Supabase). Checklist de 27 regras revisado em 16/11/2026: Dependabot em `.github/dependabot.yml`, `npm audit` zerado. Pendências que dependem do João: limite de requisições ou captcha no formulário de revenda, monitoramento, cookie de sessão sem `HttpOnly` (o envio de arquivos do painel lê a sessão no navegador), e no Supabase desligar o cadastro público, ligar a proteção contra senhas vazadas e o 2FA.
 - Jurídico (revisão de 16/11/2026): `/privacidade` é um rascunho com os dados da empresa entre colchetes, linkado no rodapé e no formulário de revenda; o texto final precisa de revisão de quem entende de LGPD. O painel de revenda tem "Excluir dados do cadastro" para atender pedidos de exclusão. O site não usa cookies nem rastreadores para o visitante, e o navegador não chama nenhum terceiro além do Supabase (fotos e materiais).
-- Performance (revisão de 16/11/2026): fontes por `next/font` em `app/layout.tsx` (servidas pelo próprio site; as variáveis `--font-sans` e `--font-display` do `motokoi.css` são sobrescritas no `<html>`). Para medir: `preview_start` com `motokoi-producao` (porta 3001, depois de `npm run build`) e Lighthouse em modo celular.
+- Performance (revisão de 16/11/2026): fontes por `next/font` em `src/app/layout.tsx` (servidas pelo próprio site; as variáveis `--font-sans` e `--font-display` do `motokoi.css` são sobrescritas no `<html>`). Para medir: `preview_start` com `motokoi-producao` (porta 3001, depois de `npm run build`) e Lighthouse em modo celular.
 - Testes: `npm test` roda a validação do formulário de revenda, o filtro do catálogo, a leitura dos cadastros do painel e as regras do banco.
-- `supabase/` e `docs/` foram copiados de `motokoi-site/` em 13/11/2026. As cópias da raiz são as que valem; as de `motokoi-site/` ficam só como origem.
+- Dados de exemplo (17/11/2026): a pedido do João, o banco e os textos fixos das páginas foram preenchidos com dados inventados marcados com "(EX)" (produtos, lojas, pedidos de revenda, números, depoimentos, WhatsApp (18) 90000-0000, história, dúvidas, garantia, privacidade). A lista do que mudou no código está em `referencias/outros/arquivos-exemplo/alteracoes-no-codigo.txt`, e `apagar-exemplos.sql` na mesma pasta limpa o banco. Os PDFs e o logo de exemplo dessa pasta ainda não foram enviados ao Storage (envio pelo painel).
+- A pasta `supabase/` da raiz é a que vale (migrações aplicadas). A de `referencias/motokoi-site/supabase/` é só a origem, mais antiga. `public/` deve ter só o que o site mostra: tudo ali vai para a internet.
 
 Dados que as telas mostram (para conferir com o banco):
 
@@ -128,7 +129,7 @@ Dados que as telas mostram (para conferir com o banco):
 - **Usuário do painel:** e-mail, senha, nome.
 - **Códigos originais:** fabricante + código da montadora, vários por produto. A busca ignora traço e espaço.
 - **Conteúdo do site:** números da marca, materiais para baixar, depoimentos (só publica com data de autorização), garantia padrão, WhatsApp, PDF do catálogo.
-- **Busca do catálogo:** use a função `buscar_produtos(termo, categoria, moto, ano)`; detalhes em `docs/banco.md`.
+- **Busca do catálogo:** use a função `buscar_produtos(termo, categoria, moto, ano)`; detalhes em `referencias/motokoi-site/docs/banco.md`.
 
 Regras de acesso a respeitar:
 - Visitante só lê produtos publicados, categorias, motos e pontos de venda.
@@ -152,7 +153,7 @@ Regras de acesso a respeitar:
 
 ## 9. O que falta e depende do dono
 
-Tudo que está entre colchetes nas telas é espaço reservado. **Não invente esses dados.** Mantenha o colchete visível até a informação chegar.
+Tudo que está entre colchetes nas telas é espaço reservado. **Não invente esses dados.** Mantenha o colchete visível até a informação chegar. Exceção: os dados de exemplo "(EX)" pedidos pelo João (seção 7), que devem ser trocados pelos reais antes de mostrar o site ao dono.
 
 - Códigos dos produtos, anos de cada moto compatível, descrições.
 - Fotos reais das peças e das caixas (as telas usam espaços cinza).
@@ -189,7 +190,7 @@ O que não copiar: textos genéricos, rodapé com ano velho, páginas com "Lorem
 1. Criar o projeto e publicar uma página vazia, para ter o deploy funcionando desde o início.
 2. Levar os tokens e os componentes (`motokoi.css`) para o projeto. Montar cabeçalho, rodapé, botão, cartão de produto.
 3. Construir as seis páginas do site com dados fixos, iguais às telas de referência.
-4. Criar o projeto no Supabase, aplicar as migrações e o seed, criar o primeiro usuário do painel (passos em `docs/banco.md`).
+4. Criar o projeto no Supabase, aplicar as migrações e o seed, criar o primeiro usuário do painel (passos em `referencias/motokoi-site/docs/banco.md`).
 5. Ligar Catálogo, Produto e Home (Novidades) ao banco.
 6. Formulário de revenda gravando no banco.
 7. Painel: login, lista de produtos, formulário de produto com envio de fotos, pedidos de revenda.
